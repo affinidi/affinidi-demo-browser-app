@@ -1,0 +1,42 @@
+{
+  "extends": [
+    "config:base",
+    ":rebaseStalePrs",
+    ":automergeMinor",
+    ":label(ready)",
+    "group:linters",
+    ":masterIssue",
+    ":assignee(standemchuk)"
+  ],
+  "ignoreNpmrcFile": true,
+  "packageRules": [
+    {
+      "datasources": ["docker"],
+      "automerge": false
+    },
+    {
+      "updateTypes": ["major"],
+      "masterIssueApproval": true
+    },
+    {
+      "packageNames": ["npm", "yarn"],
+      "automerge": false
+    },
+    {
+      "depTypeList": ["dependencies"],
+      "semanticCommitType": "build"
+    },
+    {
+      "packageNames": ["semantic-release"],
+      "semanticCommitType": "build"
+    },
+    {
+      "packageNames": ["@types/jest"],
+      "groupName": "jest monorepo"
+    },
+    {
+      "paths": ["**/__fixtures__/**"],
+      "enabled": false
+    }
+  ]
+}

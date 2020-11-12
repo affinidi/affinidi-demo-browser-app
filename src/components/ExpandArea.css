@@ -1,0 +1,36 @@
+.ExpandArea {
+  padding: 10px;
+  background-color: #e7e7e7;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.Expanded {
+  margin-top: 10px;
+}
+
+.Toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.Label {
+  margin: 0;
+  font-size: 18px;
+}
+
+.HtmlContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.Html {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  border-color: #c3c3c3;
+  resize: none;
+}

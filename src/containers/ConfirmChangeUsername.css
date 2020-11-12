@@ -1,0 +1,10 @@
+@media all and (min-width: 480px) {
+  .ConfirmChangeUsername {
+    padding: 60px 0;
+  }
+
+  .ConfirmChangeUsername form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+}
