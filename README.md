@@ -1,6 +1,6 @@
 # Affinidi Demo Browser App powered by [Affinidi SDK](https://github.com/affinityproject/affinidi-core-sdk)
 
-This is a react application that has a basic UI with some of the functionalities that [Affinidi SDK](https://github.com/affinityproject/affinidi-core-sdk) offers. You can use app this to play around with some of the functionalities offered in the Affinidi SDK and eventually enable SSI for your own application.
+This is a react application that has a basic UI with some of the functionalities that [Affinidi SDK](https://github.com/affinityproject/affinidi-core-sdk) offers. You can use this app to play around with some of the functionalities offered in the Affinidi SDK and eventually enable SSI for your own application(s).
 
 ## Installation
 
