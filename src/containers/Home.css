@@ -56,6 +56,15 @@
   margin: 20px 0;
 }
 
+.ValidateArea > div:first-child {
+  display: flex;
+  flex-direction: row;
+}
+
+.ValidateArea > div:first-child > button {
+  margin-right: 15px
+}
+
 .ValidateError {
   display: flex;
   align-items: center;
