@@ -58,7 +58,7 @@ class Home extends Component {
     for (const verifiableCredential of verifiableCredentials) {
       const { credential } = verifiableCredential
 
-      const value = JSON.stringify({ ...credential, '@context': undefined }, undefined, '\t')
+      const value = JSON.stringify(credential, undefined, '\t')
 
       credentialsList.push(
         <div>
