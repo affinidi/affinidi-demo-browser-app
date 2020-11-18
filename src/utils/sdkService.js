@@ -1,6 +1,8 @@
 import decodeEnv from './decodeEnv'
 import { AffinityWallet as Wallet } from '@affinidi/wallet-browser-sdk'
 import { Affinidi } from '@affinidi/common'
+import JwtService from "@affinidi/common/dist/services/JwtService";
+import { randomBytes } from "@affinidi/common/dist/shared/randomBytes";
 
 class SdkService {
   constructor() {
@@ -11,6 +13,7 @@ class SdkService {
       apiKey
     }
     this.sdk = Wallet
+    this.jwtService = new JwtService()
   }
 
   async init() {
@@ -108,6 +111,33 @@ class SdkService {
   async changePassword(oldPassword, newPassword) {
     const networkMember = await this.init()
     return networkMember.changePassword(oldPassword, newPassword, this.options)
+  }
+
+  async createCredentialShareRequestTokenFromRequesterDid(credentialRequirements, requesterDid) {
+    const jti = await randomBytes(8).toString('hex');
+
+    const jwtObject = {
+      header: {
+        typ: 'JWT',
+        alg: 'ES256K',
+      },
+      payload: {
+        exp: Date.now() + (60 * 10 * 1000),
+        typ: 'credentialRequest',
+        iss: requesterDid.includes('#') ? requesterDid : requesterDid + '#primary',
+        aud: '',
+        interactionToken: { credentialRequirements, callbackURL: "" },
+        jti,
+      },
+      signature: 'invalid',
+    }
+
+    return this.jwtService.encodeObjectToJWT(jwtObject)
+  }
+
+  async createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials) {
+    const networkMember = await this.init()
+    return networkMember.createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials)
   }
 }
 

@@ -1,7 +1,8 @@
-import React, { Component, Fragment } from 'react'
-import { Button } from 'react-bootstrap'
-import './Home.css'
+import React, {Component, Fragment} from 'react'
 import { getVCNamePersonV1Context, getVCEmailPersonV1Context, getVCPhonePersonV1Context } from '@affinidi/vc-data'
+import {Button} from 'react-bootstrap'
+import './Home.css'
+import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -39,7 +40,8 @@ class Home extends Component {
       isLoading: false,
       credentials: [],
       did: null,
-      verifiableCredentials: []
+      verifiableCredentials: [],
+      verifiablePresentationModalCredential: undefined
     }
   }
 
@@ -55,16 +57,20 @@ class Home extends Component {
 
     for (const verifiableCredential of verifiableCredentials) {
       const { credential } = verifiableCredential
-      delete credential['@context']
 
       const value = JSON.stringify(credential, undefined, '\t')
 
       credentialsList.push(
         <div>
           <div className='ValidateArea'>
-            <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, credential.id) }>
-              Validate
-            </Button>
+            <div>
+              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, credential.id) }>
+                Validate
+              </Button>
+              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.openVerifiablePresentationModal(event, credential) }>
+                Create VP
+              </Button>
+            </div>
             { this.state.isLoading &&
               <img className='LoadingGif' src={loadingGif} alt="loading gif"/>
             }
@@ -142,6 +148,16 @@ class Home extends Component {
       console.log(error)
       alert(error.message)
     }
+  }
+
+  openVerifiablePresentationModal(event, credential) {
+    event.preventDefault()
+
+    this.setState({ verifiablePresentationModalCredential: credential })
+  }
+
+  closeVerifiablePresentationModal() {
+    this.setState({ verifiablePresentationModalCredential: undefined })
   }
 
   // Depending on whether the username is a phone number, email, or neither,
@@ -239,7 +255,7 @@ class Home extends Component {
   }
 
   render() {
-    const { did, verifiableCredentials } = this.state
+    const { did, verifiableCredentials, verifiablePresentationModalCredential } = this.state
 
     const haveCredentials = verifiableCredentials && verifiableCredentials.length > 0
     const { isAuthenticated } = this.props
@@ -274,6 +290,11 @@ class Home extends Component {
 
           </form>
         </div>
+        {verifiablePresentationModalCredential && (
+            <CreateVerifiablePresentationModal
+                credential={verifiablePresentationModalCredential}
+                onClose={() => this.closeVerifiablePresentationModal()} />
+        )}
       </Fragment>
     )
   }
