@@ -3,6 +3,7 @@ import { getVCNamePersonV1Context, getVCEmailPersonV1Context, getVCPhonePersonV1
 import {Button} from 'react-bootstrap'
 import './Home.css'
 import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
+import { CredentialShareModal } from "./CredentialShareModal";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -41,7 +42,9 @@ class Home extends Component {
       credentials: [],
       did: null,
       verifiableCredentials: [],
-      verifiablePresentationModalCredential: undefined
+      verifiablePresentationModalCredential: undefined,
+      credentialShareRequestToken: '',
+      credentialShareRequestModalToken: undefined
     }
   }
 
@@ -160,6 +163,22 @@ class Home extends Component {
     this.setState({ verifiablePresentationModalCredential: undefined })
   }
 
+  openCredentialShareModal(event) {
+    event.preventDefault()
+
+    const { credentialShareRequestToken } = this.state
+
+    if (credentialShareRequestToken.trim().length < 1) {
+      return alert('Please enter a credential share request token.')
+    }
+
+    this.setState({ credentialShareRequestModalToken: credentialShareRequestToken })
+  }
+
+  closeCredentialShareModal() {
+    this.setState({ credentialShareRequestModalToken: undefined })
+  }
+
   // Depending on whether the username is a phone number, email, or neither,
   // returns the appropriate combination of claim and credentialMetadata
   makeClaimAndCredentialMetadata(username) {
@@ -255,7 +274,7 @@ class Home extends Component {
   }
 
   render() {
-    const { did, verifiableCredentials, verifiablePresentationModalCredential } = this.state
+    const { did, verifiableCredentials, verifiablePresentationModalCredential, credentialShareRequestModalToken } = this.state
 
     const haveCredentials = verifiableCredentials && verifiableCredentials.length > 0
     const { isAuthenticated } = this.props
@@ -279,6 +298,21 @@ class Home extends Component {
               </label>
             }
 
+            { isAuthenticated && did &&
+              <label>
+                Credential Share Request Token:
+                <div className='ShareToken'>
+                  <input
+                      type='text'
+                      autoComplete="off"
+                      name='credentialShareRequestToken'
+                      value={this.state.credentialShareRequestToken}
+                      onChange={(e) => this.setState({ credentialShareRequestToken: e.target.value })}/>
+                  <Button bsSize='large' onClick={(event) => this.openCredentialShareModal(event)}>Share</Button>
+                </div>
+              </label>
+            }
+
             <br />
 
             { isAuthenticated && haveCredentials &&
@@ -294,6 +328,11 @@ class Home extends Component {
             <CreateVerifiablePresentationModal
                 credential={verifiablePresentationModalCredential}
                 onClose={() => this.closeVerifiablePresentationModal()} />
+        )}
+        {credentialShareRequestModalToken && (
+            <CredentialShareModal
+                credentialShareRequestToken={credentialShareRequestModalToken}
+                onClose={() => this.closeCredentialShareModal()} />
         )}
       </Fragment>
     )

@@ -135,6 +135,11 @@ class SdkService {
     return this.jwtService.encodeObjectToJWT(jwtObject)
   }
 
+  async getCredentials(credentialShareRequestToken, fetchBackupCredentials) {
+    const networkMember = await this.init()
+    return networkMember.getCredentials(credentialShareRequestToken, fetchBackupCredentials)
+  }
+
   async createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials) {
     const networkMember = await this.init()
     return networkMember.createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials)
