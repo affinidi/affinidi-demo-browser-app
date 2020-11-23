@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {Alert, Table, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import {useAsync, useAsyncFn} from "react-use";
-import {useCreateOfferRequestModal} from "./CredentialOfferRequestModal";
+import {useTokenModal} from "../utils/useTokenModal";
 
 function parseInfoFromToken(token) {
     try {
@@ -53,7 +53,7 @@ async function sendVPToCallback(callbackURL, vp) {
 }
 
 export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) => {
-    const { open: openCreateOfferRequestModal } = useCreateOfferRequestModal()
+    const { open: openTokenModal } = useTokenModal()
     const { requesterDid, callbackURL } = parseInfoFromToken(credentialShareRequestToken)
 
     const { loading: credentialsLoading, value: credentials, error: credentialsError } = useAsync(
@@ -84,10 +84,11 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
 
     useEffect(() => {
         if (callbackResponse && callbackResponse.requestToken) {
-            const { requestToken: offerRequestToken } = callbackResponse
+            const { requestToken } = callbackResponse
 
-            onClose()
-            openCreateOfferRequestModal(offerRequestToken)
+            if (openTokenModal(requestToken)) {
+                onClose()
+            }
         }
     }, [callbackResponse])
 

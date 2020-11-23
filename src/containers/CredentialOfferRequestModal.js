@@ -19,10 +19,10 @@ export const useCreateOfferRequestModal = () => {
 
 function parseInfoFromToken(token) {
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]))
+        const { payload } = window.sdk.parseToken(token)
         const callbackURL = (payload.interactionToken || {}).callbackURL || undefined
         const offeredCredentials = (payload.interactionToken || {}).offeredCredentials || undefined
-        const issuerDid = (payload.iss.split(';')[0]).split(';')[0]
+        const issuerDid = payload.iss
         const typ = payload.typ
 
         return { issuerDid, offeredCredentials, callbackURL, typ }
