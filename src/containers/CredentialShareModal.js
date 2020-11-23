@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {Alert, Table, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import {useAsync, useAsyncFn} from "react-use";
-import {useTokenModal} from "../utils/useTokenModal";
+import {useTokenModal} from "./TokenModal";
 
 function parseInfoFromToken(token) {
     try {

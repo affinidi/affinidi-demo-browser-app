@@ -6,7 +6,7 @@ import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import './App.css'
 
 import SdkService from './utils/sdkService'
-import {CreateOfferRequestModalProvider} from "./containers/CredentialOfferRequestModal";
+import {TokenModalProvider} from "./containers/TokenModal";
 
 function App(props) {
   window.sdk = new SdkService()
@@ -27,7 +27,7 @@ function App(props) {
 
   return (
     <div className='App container'>
-      <CreateOfferRequestModalProvider>
+      <TokenModalProvider>
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
@@ -68,7 +68,7 @@ function App(props) {
           </Navbar.Collapse>
         </Navbar>
         <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
-      </CreateOfferRequestModalProvider>
+      </TokenModalProvider>
     </div>
   )
 }

@@ -1,21 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import { Alert, Button, ControlLabel, FormControl, FormGroup, Modal, Table } from "react-bootstrap";
 import { useAsyncFn } from "react-use";
-
-const CreateOfferRequestModalContext = React.createContext({ offerRequestToken: undefined, setOfferRequestToken(){ } })
-
-export const useCreateOfferRequestModal = () => {
-    const { setOfferRequestToken } = useContext(CreateOfferRequestModalContext)
-
-    return {
-        open(offerRequestToken) {
-            setOfferRequestToken(offerRequestToken)
-        },
-        close() {
-            setOfferRequestToken(undefined)
-        },
-    }
-}
 
 function parseInfoFromToken(token) {
     try {
@@ -150,15 +135,4 @@ function getAlert(callbackURL, acceptLoading, acceptResponse, acceptError) {
     }
 
     return undefined
-}
-
-export const CreateOfferRequestModalProvider = ({ children }) => {
-    const [offerRequestToken, setOfferRequestToken] = useState()
-
-    return (
-        <CreateOfferRequestModalContext.Provider value={{ offerRequestToken, setOfferRequestToken}}>
-            { children }
-            { offerRequestToken && <CreateOfferRequestModal offerRequestToken={offerRequestToken} onClose={() => setOfferRequestToken(undefined)} /> }
-        </CreateOfferRequestModalContext.Provider>
-    )
 }
