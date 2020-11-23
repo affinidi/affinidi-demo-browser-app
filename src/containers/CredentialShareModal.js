@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import {Alert, Table, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import {useAsync, useAsyncFn} from "react-use";
+import {useCreateOfferRequestModal} from "./CredentialOfferRequestModal";
 
 function parseInfoFromToken(token) {
     try {
@@ -15,28 +16,17 @@ function parseInfoFromToken(token) {
 }
 
 async function getCredentials(credentialShareRequestToken) {
-    try {
-        const credentials = await window.sdk.getCredentials(credentialShareRequestToken)
+    const credentials = await window.sdk.getCredentials(credentialShareRequestToken)
 
-        if (!Array.isArray(credentials) || credentials.length < 1) {
-            alert('No credential found for this request!')
-            return []
-        }
-
-        return credentials
-    } catch(err) {
-        alert(err.message)
-        return []
+    if (!Array.isArray(credentials) || credentials.length < 1) {
+        throw new Error('No credential found for this request!')
     }
+
+    return credentials
 }
 
 async function createCredentialShareResponseToken(credentialShareRequestToken, credentials) {
-    try {
-        return await window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
-    } catch(err) {
-        alert(err.message)
-        return undefined
-    }
+    return window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
 }
 
 async function sendVPToCallback(callbackURL, vp) {
@@ -63,14 +53,15 @@ async function sendVPToCallback(callbackURL, vp) {
 }
 
 export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) => {
+    const { open: openCreateOfferRequestModal } = useCreateOfferRequestModal()
     const { requesterDid, callbackURL } = parseInfoFromToken(credentialShareRequestToken)
 
-    const { loading: credentialsLoading, value: credentials } = useAsync(
+    const { loading: credentialsLoading, value: credentials, error: credentialsError } = useAsync(
         () => getCredentials(credentialShareRequestToken),
         [credentialShareRequestToken]
     )
     const [
-        { loading: createVPLoading, value: credentialShareResponseToken },
+        { loading: createVPLoading, value: credentialShareResponseToken, error: createVPError },
         onCreateVP
     ] = useAsyncFn(
         () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
@@ -88,7 +79,17 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         }
     }, [callbackURL, credentialShareResponseToken])
 
-    const shareButtonDisabled = credentialsLoading || createVPLoading || callbackLoading || credentials.length < 1 || !!credentialShareResponseToken
+    const shareButtonDisabled = credentialsLoading || !!credentialsError || credentials.length < 1 || createVPLoading || callbackLoading || !!credentialShareResponseToken
+    const alert = getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError)
+
+    useEffect(() => {
+        if (callbackResponse && callbackResponse.requestToken) {
+            const { requestToken: offerRequestToken } = callbackResponse
+
+            onClose()
+            openCreateOfferRequestModal(offerRequestToken)
+        }
+    }, [callbackResponse])
 
     return (
         <Modal
@@ -149,26 +150,38 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                         value={createVPLoading ? '-' : credentialShareResponseToken || ''}
                     />
                 </FormGroup>
-                {callbackURL && (callbackLoading || callbackResponse || callbackError) &&
+                {alert &&
                     <FormGroup>
-                        {callbackLoading &&
-                            <Alert bsStyle="warning">
-                                Sending VP to callbackURL.
-                            </Alert>
-                        }
-                        {callbackResponse &&
-                            <Alert bsStyle="success">
-                                Sent VP to callbackURL successfully.
-                            </Alert>
-                        }
-                        {callbackError &&
-                            <Alert bsStyle="danger">
-                                There was an error sending VP to callbackURL. Error: {callbackError.message}
-                            </Alert>
-                        }
+                        <Alert bsStyle={alert.bsStyle} children={alert.message} />
                     </FormGroup>
                 }
             </Modal.Body>
         </Modal>
     )
+}
+
+function getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError) {
+    if (callbackURL && (callbackLoading || callbackResponse || callbackError)) {
+        if (callbackLoading) {
+            return { message: 'Sending VP to callbackURL.', bsStyle: 'warning' }
+        }
+
+        if (callbackResponse) {
+            return { message: 'Sent VP to callbackURL successfully.', bsStyle: 'success' }
+        }
+
+        if (callbackError) {
+            return { message: `There was an error sending VP to callbackURL. Error: ${callbackError.message}`, bsStyle: 'danger' }
+        }
+    }
+
+    if (credentialsError) {
+        return { message: `Could not list credentials. Error: ${credentialsError.message}`, bsStyle: 'danger' }
+    }
+
+    if (createVPError) {
+        return { message: `Could not create VP. Error: ${createVPError.message}`, bsStyle: 'danger' }
+    }
+
+    return undefined
 }
