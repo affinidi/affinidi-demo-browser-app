@@ -144,6 +144,10 @@ class SdkService {
     const networkMember = await this.init()
     return networkMember.createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials)
   }
+
+  parseToken(token) {
+    return JwtService.fromJWT(token)
+  }
 }
 
 export default SdkService

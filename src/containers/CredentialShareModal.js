@@ -4,9 +4,9 @@ import {useAsync, useAsyncFn} from "react-use";
 
 function parseInfoFromToken(token) {
     try {
-        const payload = JSON.parse(atob(token.split('.')[1]))
+        const { payload } = window.sdk.parseToken(token)
         const callbackURL = (payload.interactionToken || {}).callbackURL || undefined
-        const requesterDid = (payload.iss.split(';')[0]).split(';')[0]
+        const requesterDid = payload.iss
 
         return { requesterDid, callbackURL }
     } catch(err) {
