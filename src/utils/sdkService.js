@@ -140,9 +140,19 @@ class SdkService {
     return networkMember.getCredentials(credentialShareRequestToken, fetchBackupCredentials)
   }
 
+  async saveCredentials(credentials) {
+    const networkMember = await this.init()
+    return networkMember.saveCredentials(credentials)
+  }
+
   async createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials) {
     const networkMember = await this.init()
     return networkMember.createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials)
+  }
+
+  async createCredentialOfferResponseToken(credentialOfferToken) {
+    const networkMember = await this.init()
+    return networkMember.createCredentialOfferResponseToken(credentialOfferToken)
   }
 
   parseToken(token) {

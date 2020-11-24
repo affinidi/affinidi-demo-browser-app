@@ -4,6 +4,7 @@ import {Button} from 'react-bootstrap'
 import './Home.css'
 import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
 import { CredentialShareModal } from "./CredentialShareModal";
+import queryString from 'query-string'
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -37,14 +38,16 @@ class Home extends Component {
   constructor(props) {
     super(props)
 
+    const { processToken } = queryString.parse(this.props.location.search)
+
     this.state = {
       isLoading: false,
       credentials: [],
       did: null,
       verifiableCredentials: [],
       verifiablePresentationModalCredential: undefined,
-      credentialShareRequestToken: '',
-      credentialShareRequestModalToken: undefined
+      credentialShareRequestToken: processToken || undefined,
+      credentialShareRequestModalToken: processToken || undefined
     }
   }
 
