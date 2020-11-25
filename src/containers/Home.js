@@ -70,7 +70,7 @@ class Home extends Component {
         <div>
           <div className='ValidateArea'>
             <div>
-              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, credential.id) }>
+              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, verifiableCredential) }>
                 Validate
               </Button>
               <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.openVerifiablePresentationModal(event, credential) }>
@@ -108,33 +108,22 @@ class Home extends Component {
     return (credentialsList)
   }
 
-  async validateCredential(event, credentialID) {
+  async validateCredential(event, verifiableCredential) {
     event.preventDefault()
 
     let isLoading = true
     this.setState({ isLoading })
 
-    const networkMember = await window.sdk.init()
-    const { verifiableCredentials } = await this.getCredentials(networkMember)
-
-    const verifiableCredential = verifiableCredentials.find((verifiableCredential) => {
-      return verifiableCredential.credential.id === credentialID
-    })
-
     try {
       const status = await window.sdk.validateCredential(verifiableCredential.credential)
 
-      verifiableCredentials.forEach((vc) => {
-        if (vc.credential.id === verifiableCredential.credential.id) {
-          if (!status.result) {
-            vc.errorMessage = status.error
-          }
+      if (!status.result) {
+        verifiableCredential.errorMessage = status.error
+      }
 
-          vc.status = status.result
-        }
-      })
+      verifiableCredential.status = status.result
 
-      this.setState({ verifiableCredentials })
+      this.forceUpdate()
     } catch (error) {
       console.log(error.message)
     }
