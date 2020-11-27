@@ -134,7 +134,9 @@ class SdkService {
   }
 
   async signUpWithExistsEntity(keyParams, username, password, messageParameters) {
-    return this.sdk.signUpWithExistsEntity(keyParams, username, password, SDK_OPTIONS, messageParameters)
+    const networkMember = await this.sdk.signUpWithExistsEntity(keyParams, username, password, SDK_OPTIONS, messageParameters)
+    SdkService._saveAccessTokenToLocalStorage(networkMember)
+    return networkMember
   }
 
   async changePassword(oldPassword, newPassword) {
