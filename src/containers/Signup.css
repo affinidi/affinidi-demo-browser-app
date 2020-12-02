@@ -1,10 +1,120 @@
 @media all and (min-width: 480px) {
   .Signup {
-    padding: 60px 0;
+    font-family: Poppins, sans-serif;
+    font-style: normal;
+    width: 100%;
+    padding: 35px 0;
+    background-color: #F1F1F1;
   }
 
-  .Signup form {
+  .Signup .Form {
     margin: 0 auto;
-    max-width: 320px;
+    max-width: 454px;
   }
+}
+
+.Signup .Form {
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 75px 40px;
+}
+
+.Signup .Title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  color: #000000;
+  margin: 0 0 15px 0;
+}
+
+.Signup .Info {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  color: #000000;
+  margin: 0 0 25px 0;
+}
+
+.Signup .Label {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: #5E5E5E;
+  margin: 0 0 10px 0;
+}
+
+.Signup .Input {
+  background: rgba(36, 0, 255, 0.05);
+  border-radius: 5px;
+  border-color: rgba(36, 0, 255, 0.05);
+}
+
+.Signup-Checkbox {
+  margin: 25px 0 40px 0;
+}
+
+.Signup-Checkbox label {
+  padding-left: 25px;
+}
+
+.Signup-Checkbox input {
+  width: 17px;
+  height: 17px;
+  background: #F4F2FF;
+  border-radius: 2px;
+  margin: 2px 0 0 -25px !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  border: 1px solid #F4F2FF;
+  outline: none;
+  cursor: pointer;
+}
+
+.Signup-Checkbox input:focus {
+  outline: none;
+}
+
+.Signup-Checkbox input:checked:after {
+  content: '\2713';
+  color: #000;
+  outline: none;
+  position: absolute;
+  left: 3px;
+}
+
+.Signup .Button {
+  color: #fff;
+  cursor: pointer;
+  background: #2400FF;
+  border-radius: 5px;
+}
+
+.Signup .Button:disabled {
+  cursor: default;
+}
+
+.Signup .Button:disabled:hover {
+  background: #2400FF;
+}
+
+.Signup .Button:hover {
+  background: #15009E;
+}
+
+.Signup .Link-Label {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  color: #000000;
+  margin: 25px 0 0 0;
+}
+
+.Signup .Link {
+  color: #2400FF;
+  text-decoration: underline;
+  margin-left: 5px;
 }
