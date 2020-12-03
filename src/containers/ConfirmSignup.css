@@ -6,6 +6,10 @@
   .ConfirmSignup form {
     margin: 0 auto;
     max-width: 320px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 40px;
   }
 
   .ConfirmSignup form .LoaderContainer {

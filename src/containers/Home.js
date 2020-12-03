@@ -274,7 +274,7 @@ class Home extends Component {
     return (
       <Fragment>
         <div className='Home'>
-          <form className='Form'>
+          <form className='Form container'>
             { isAuthenticated &&
               <div>
                 <Button bsSize='large' disabled={ haveCredentials } onClick={ event => this.createLoginMethodCredential(event) }>
