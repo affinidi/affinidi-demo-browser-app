@@ -50,7 +50,7 @@ export const CreateOfferRequestModal = ({ offerRequestToken, onClose }) => {
         if (typ !== 'credentialOfferRequest' || !callbackURL) {
             onClose()
         }
-    }, [typ, callbackURL])
+    }, [typ, callbackURL, onClose])
 
     const [{ loading: acceptLoading, value: acceptResponse, error: acceptError }, onAccept] = useAsyncFn(
         async () => acceptOfferRequest(callbackURL, offerRequestToken),

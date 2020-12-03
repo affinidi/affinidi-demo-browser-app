@@ -4,6 +4,7 @@ import {Button} from 'react-bootstrap'
 import './Home.css'
 import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
 import { CredentialShareModal } from "./CredentialShareModal";
+import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
 
 const loadingGif = require('../static/images/loading.gif')
@@ -42,6 +43,7 @@ class Home extends Component {
 
     this.state = {
       isLoading: false,
+      isDeleteModalShown: false,
       credentials: [],
       did: null,
       verifiableCredentials: [],
@@ -61,13 +63,13 @@ class Home extends Component {
   renderCredentials(verifiableCredentials) {
     const credentialsList = []
 
-    for (const verifiableCredential of verifiableCredentials) {
+    for (const [key, verifiableCredential] of verifiableCredentials.entries()) {
       const { credential } = verifiableCredential
 
       const value = JSON.stringify(credential, undefined, '\t')
 
       credentialsList.push(
-        <div>
+        <div key={key}>
           <div className='ValidateArea'>
             <div>
               <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, verifiableCredential) }>
@@ -98,9 +100,15 @@ class Home extends Component {
             }
           </div>
           <textarea key={this.getRandomInt()} readOnly name='credentials' rows='23' value={value} />
-          <Button bsSize='large' onClick={ event => this.deleteCredential(event, credential.id) }>
+          <Button bsSize='large' onClick={ event => this.openDeleteModal(event) }>
             Delete VC
           </Button>
+          <DeleteCredentialModal
+            isShown={this.state.isDeleteModalShown}
+            loading={this.state.isLoading}
+            onDelete={() => this.deleteCredential(credential.id)}
+            onClose={() => this.closeDeleteModal()}
+          />
         </div>
       )
     }
@@ -132,17 +140,33 @@ class Home extends Component {
     this.setState({ isLoading })
   }
 
-  async deleteCredential(event, credentialId) {
-    event.preventDefault()
+  async deleteCredential(credentialId) {
+    await this.setState({ isLoading: true })
 
     const networkMember = await window.sdk.init()
     try {
       await networkMember.deleteCredential(credentialId)
       await this.refreshCredentials(networkMember)
+
+      await this.setState({ isLoading: false, isDeleteModalShown: false })
     } catch (error) {
       console.log(error)
       alert(error.message)
+
+      await this.setState({ isLoading: false, isDeleteModalShown: false })
     }
+  }
+
+  async openDeleteModal(event) {
+    event.preventDefault()
+
+    window.scrollTo(0, 0)
+
+    await this.setState({ isDeleteModalShown: true })
+  }
+
+  closeDeleteModal() {
+    this.setState({ isDeleteModalShown: false })
   }
 
   openVerifiablePresentationModal(event, credential) {
