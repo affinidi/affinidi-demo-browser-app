@@ -15,7 +15,7 @@ export default function Signup(props) {
     const urlParams = new URLSearchParams(window.location.search);
     const emailParam = urlParams.get('email')
     emailParam ? setUsername(emailParam) : setIsUserNameFieldVisible(true)
-  })
+  }, [])
 
   function validateForm() {
     return username.length > 0 && password.length > 0 && confirmPassword.length > 0 && isCheckboxChecked

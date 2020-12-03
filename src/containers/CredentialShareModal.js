@@ -77,7 +77,7 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         if (callbackURL && credentialShareResponseToken) {
             sendVP()
         }
-    }, [callbackURL, credentialShareResponseToken])
+    }, [callbackURL, credentialShareResponseToken, sendVP])
 
     const shareButtonDisabled = credentialsLoading || !!credentialsError || credentials.length < 1 || createVPLoading || callbackLoading || !!credentialShareResponseToken
     const alert = getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError)
@@ -90,7 +90,7 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                 onClose()
             }
         }
-    }, [callbackResponse])
+    }, [callbackResponse, openTokenModal, onClose])
 
     return (
         <Modal

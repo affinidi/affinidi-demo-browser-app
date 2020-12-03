@@ -35,6 +35,7 @@ function getModal(token, typ, close) {
     switch (typ) {
         case 'credentialOfferRequest':
             return <CreateOfferRequestModal offerRequestToken={token} onClose={close} />
+        default:
     }
 }
 
