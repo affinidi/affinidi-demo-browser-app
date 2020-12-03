@@ -43,28 +43,34 @@ export default function Login(props) {
 
   return (
     <div className='Login'>
-      <form onSubmit={handleSubmit}>
+      <form className='Form' onSubmit={handleSubmit}>
+        <h1 className='Title'>Login</h1>
+        <p className='Info'>
+          Login in order to continue
+        </p>
         <FormGroup controlId='username' bsSize='large'>
-          <ControlLabel>Username</ControlLabel>
+          <ControlLabel className='Label'>Username</ControlLabel>
           <FormControl
             autoFocus
+            className='Input'
             type='text'
             value={username}
             onChange={e => setUsername(e.target.value)}
           />
         </FormGroup>
         <FormGroup controlId='password' bsSize='large'>
-          <ControlLabel>Password</ControlLabel>
+          <ControlLabel className='Label'>Password</ControlLabel>
           <FormControl
+            className='Input'
             type='password'
             value={password}
             onChange={ event => setPassword(event.target.value) }
           />
         </FormGroup>
-        <Button block bsSize='large' disabled={!validateForm()} type='submit'>
+        <Link className='Link' to='/reset-password'>Forgot password?</Link>
+        <Button className='Button' block bsSize='large' disabled={!validateForm()} type='submit'>
           Login
         </Button>
-        <Link to='/reset-password'>Reset Password</Link>
       </form>
     </div>
   )
