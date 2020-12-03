@@ -1,14 +1,120 @@
 @media all and (min-width: 480px) {
   .SignupWithDid {
-    padding: 60px 0;
+    font-family: Poppins, sans-serif;
+    font-style: normal;
+    width: 100%;
+    padding: 35px 0;
+    background-color: #F1F1F1;
   }
 
-  .SignupWithDid form {
+  .SignupWithDid .Form {
     margin: 0 auto;
-    max-width: 320px;
-    background: #FFFFFF;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 40px;
+    max-width: 454px;
   }
+}
+
+.SignupWithDid .Form {
+  background: #FFFFFF;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 75px 40px;
+}
+
+.SignupWithDid .Title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  color: #000000;
+  margin: 0 0 15px 0;
+}
+
+.SignupWithDid .Info {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  color: #000000;
+  margin: 0 0 25px 0;
+}
+
+.SignupWithDid .Label {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: #5E5E5E;
+  margin: 0 0 10px 0;
+}
+
+.SignupWithDid .Input {
+  background: rgba(36, 0, 255, 0.05);
+  border-radius: 5px;
+  border-color: rgba(36, 0, 255, 0.05);
+}
+
+.SignupWithDid-Checkbox {
+  margin: 25px 0 40px 0;
+}
+
+.SignupWithDid-Checkbox label {
+  padding-left: 25px;
+}
+
+.SignupWithDid-Checkbox input {
+  width: 17px;
+  height: 17px;
+  background: #F4F2FF;
+  border-radius: 2px;
+  margin: 2px 0 0 -25px !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  border: 1px solid #F4F2FF;
+  outline: none;
+  cursor: pointer;
+}
+
+.SignupWithDid-Checkbox input:focus {
+  outline: none;
+}
+
+.SignupWithDid-Checkbox input:checked:after {
+  content: '\2713';
+  color: #000;
+  outline: none;
+  position: absolute;
+  left: 3px;
+}
+
+.SignupWithDid .Button {
+  color: #fff;
+  cursor: pointer;
+  background: #2400FF;
+  border-radius: 5px;
+}
+
+.SignupWithDid .Button:disabled {
+  cursor: default;
+}
+
+.SignupWithDid .Button:disabled:hover {
+  background: #2400FF;
+}
+
+.SignupWithDid .Button:hover {
+  background: #15009E;
+}
+
+.SignupWithDid .Link-Label {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  color: #000000;
+  margin: 25px 0 0 0;
+}
+
+.SignupWithDid .Link {
+  color: #2400FF;
+  text-decoration: underline;
+  margin-left: 5px;
 }
