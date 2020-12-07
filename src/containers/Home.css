@@ -1,5 +1,13 @@
 .Home {
-  padding: 20px 0;
+  padding: 50px 0 60px 0;
+}
+
+.Home .Title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  color: #000000;
+  margin: 0 0 15px 0;
 }
 
 .Home .lander {
@@ -22,7 +30,7 @@
   background: #FFFFFF;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  padding: 20px;
+  padding: 75px 65px;
 }
 
 .Home form label,
@@ -61,14 +69,92 @@ input:read-only {
   border: 1px solid #e7e7e7;
   border-radius: 4px;
   color: #777;
-  padding: 15px 15px;
+  padding: 30px;
   line-height: 1.5;
   resize: none;
   width: 100%;
 }
 
-.Home textarea {
-  margin-bottom: 20px;
+.Home .TextareaContainer {
+  position: relative;
+  font-family: Poppins, sans-serif;
+  font-style: normal;
+}
+
+.Home .Title {
+  font-weight: 700;
+}
+
+.Home .ShareButton {
+  background: #2400FF;
+  border-radius: 5px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #fff;
+  width: 166px;
+  height: 45px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.Home .ShareButton:hover {
+  background: #1800B8;
+}
+
+.Home .ShareButton:disabled {
+  pointer-events: none;
+}
+
+.Home .ShowDetails {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration-line: underline;
+  color: #2400FF;
+  cursor: pointer;
+  margin: 0;
+}
+
+.Home .DeleteCredential {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration-line: underline;
+  color: #ff0000;
+  cursor: pointer;
+  margin: 0;
+}
+
+.Home .HideDetailsButton {
+  background: #fff;
+  border-radius: 5px;
+  position: absolute;
+  top: 20px;
+  right: 200px;
+  color: #2400FF;
+  border: 1px solid #2400FF;
+  width: 166px;
+  height: 45px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.Home .HideDetailsButton:hover {
+  background: #2400FF;
+  color: #fff;
+}
+
+.Home .HideDetailsButton:disabled {
+  pointer-events: none;
 }
 
 .ValidateArea {
@@ -111,6 +197,28 @@ textarea .ValidateArea {
   pointer-events: none;
 }
 
-.Title {
-  font-weight: 700;
+@media screen and (max-width: 650px) {
+  .Home form {
+    padding: 40px 20px;
+  }
+
+  .ValidateArea {
+    flex-wrap: wrap;
+  }
+
+  .ErrorMessage {
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .Home .HideDetailsButton,
+  .Home .ShareButton {
+    width: auto;
+    padding: 0 10px;
+  }
+
+  .Home .HideDetailsButton {
+    right: 100px;
+  }
 }
