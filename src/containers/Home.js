@@ -6,6 +6,7 @@ import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentatio
 import { CredentialShareModal } from "./CredentialShareModal";
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
+import {ModalOpener} from "./TokenModal";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -345,11 +346,7 @@ class Home extends Component {
                 credential={verifiablePresentationModalCredential}
                 onClose={() => this.closeVerifiablePresentationModal()} />
         )}
-        {credentialShareRequestModalToken && (
-            <CredentialShareModal
-                credentialShareRequestToken={credentialShareRequestModalToken}
-                onClose={() => this.closeCredentialShareModal()} />
-        )}
+        <ModalOpener token={credentialShareRequestModalToken} />
       </Fragment>
     )
   }
