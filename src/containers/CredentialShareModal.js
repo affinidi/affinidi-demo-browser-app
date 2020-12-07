@@ -129,11 +129,11 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                         </thead>
                         <tbody>
                             {(credentials || []).map((credential, idx) => (
-                                <tr key={credential.id}>
-                                    <td>{idx + 1}</td>
-                                    <td>{credential.id}</td>
-                                    <td>{JSON.stringify(credential.type)}</td>
-                                </tr>
+                              <tr key={credential.id}>
+                                  <td>{idx + 1}</td>
+                                  <td>{credential.id}</td>
+                                  <td>{JSON.stringify(credential.type)}</td>
+                              </tr>
                             ))}
                         </tbody>
                     </Table>

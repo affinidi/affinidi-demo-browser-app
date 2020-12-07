@@ -50,7 +50,7 @@ class Home extends Component {
       verifiableCredentials: [],
       verifiablePresentationModalCredential: undefined,
       credentialShareRequestToken: processToken || undefined,
-      credentialShareRequestModalToken: processToken || undefined
+      credentialShareRequestModalToken: processToken || undefined,
     }
   }
 
@@ -75,9 +75,6 @@ class Home extends Component {
             <div>
               <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, verifiableCredential) }>
                 Validate
-              </Button>
-              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.openVerifiablePresentationModal(event, credential) }>
-                Create VP
               </Button>
             </div>
             { this.state.isLoading &&
@@ -107,7 +104,7 @@ class Home extends Component {
                 Hide Details
               </Button>
             }
-            <Button className='ShareButton' disabled>
+            <Button className='ShareButton' onClick={event => this.openVerifiablePresentationModal(event, credential)}>
               Share
             </Button>
             { !this.state.areCredentialDetailsShown &&
@@ -166,7 +163,7 @@ class Home extends Component {
       await networkMember.deleteCredential(credentialId)
       await this.refreshCredentials(networkMember)
 
-      await this.setState({ isLoading: false, isDeleteModalShown: false })
+      await this.setState({ isLoading: false, isDeleteModalShown: false, areCredentialDetailsShown: false })
     } catch (error) {
       console.log(error)
       alert(error.message)
