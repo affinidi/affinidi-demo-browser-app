@@ -30,7 +30,7 @@ async function createCredentialShareResponseToken(credentialShareRequestToken, c
     const verifiablePresentation = await window.sdk.createPresentationFromChallenge(credentialShareRequestToken, credentials, 'domain')
 
     if (shouldSendMessage && requesterDid) {
-        await window.messageService.send(requesterDid, credentialShareResponseToken)
+        await window.messageService.send(requesterDid, { token: credentialShareResponseToken })
     }
 
     return { credentialShareResponseToken, verifiablePresentation }
