@@ -333,11 +333,11 @@ class Home extends Component {
                 Credential Share Request Token:
                 <div className='ShareToken'>
                   <input
-                    type='text'
-                    autoComplete="off"
-                    name='credentialShareRequestToken'
-                    value={this.state.credentialShareRequestToken}
-                    onChange={(e) => this.setState({ credentialShareRequestToken: e.target.value })}/>
+                      type='text'
+                      autoComplete="off"
+                      name='credentialShareRequestToken'
+                      value={this.state.credentialShareRequestToken}
+                      onChange={(e) => this.setState({ credentialShareRequestToken: e.target.value })}/>
                   <Button bsSize='large' onClick={(event) => this.openCredentialShareModal(event)}>Share</Button>
                 </div>
               </label>
@@ -355,14 +355,14 @@ class Home extends Component {
           </form>
         </div>
         {verifiablePresentationModalCredential && (
-          <CreateVerifiablePresentationModal
-            credential={verifiablePresentationModalCredential}
-            onClose={() => this.closeVerifiablePresentationModal()} />
+            <CreateVerifiablePresentationModal
+                credential={verifiablePresentationModalCredential}
+                onClose={() => this.closeVerifiablePresentationModal()} />
         )}
         {credentialShareRequestModalToken && (
-          <CredentialShareModal
-            credentialShareRequestToken={credentialShareRequestModalToken}
-            onClose={() => this.closeCredentialShareModal()} />
+            <CredentialShareModal
+                credentialShareRequestToken={credentialShareRequestModalToken}
+                onClose={() => this.closeCredentialShareModal()} />
         )}
       </Fragment>
     )

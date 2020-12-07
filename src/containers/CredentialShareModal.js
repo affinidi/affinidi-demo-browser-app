@@ -65,11 +65,11 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         onCreateVP
     ] = useAsyncFn(
         () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
-         [credentialShareRequestToken, credentials]
+        [credentialShareRequestToken, credentials]
     );
 
     const [{ loading: callbackLoading, value: callbackResponse, error: callbackError }, sendVP] = useAsyncFn(
-         () => sendVPToCallback(callbackURL, credentialShareResponseToken),
+        () => sendVPToCallback(callbackURL, credentialShareResponseToken),
         [callbackURL, credentialShareResponseToken]
     )
 
@@ -121,20 +121,20 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                     <ControlLabel>Credentials</ControlLabel>
                     <Table striped bordered hover size='sm'>
                         <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>id</th>
-                            <th>type</th>
-                        </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>id</th>
+                                <th>type</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {(credentials || []).map((credential, idx) => (
-                          <tr key={credential.id}>
-                              <td>{idx + 1}</td>
-                              <td>{credential.id}</td>
-                              <td>{JSON.stringify(credential.type)}</td>
-                          </tr>
-                        ))}
+                            {(credentials || []).map((credential, idx) => (
+                              <tr key={credential.id}>
+                                  <td>{idx + 1}</td>
+                                  <td>{credential.id}</td>
+                                  <td>{JSON.stringify(credential.type)}</td>
+                              </tr>
+                            ))}
                         </tbody>
                     </Table>
                 </FormGroup>
