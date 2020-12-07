@@ -1,7 +1,7 @@
 import AffinidiDidAuthService from "@affinidi/affinidi-did-auth-lib/dist/DidAuthService/DidAuthService";
 import config from "../config";
 
-const MESSAGE_SERVICE_BASE_URL = "http://localhost:3000/api/v1";
+const MESSAGE_SERVICE_BASE_URL = config.messagesBaseUrl + "/api/v1";
 const DEFAULT_HEADERS = {
     "Content-Type": "application/json",
     "Api-Key": config.apiKeyHash,

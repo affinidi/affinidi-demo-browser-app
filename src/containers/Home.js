@@ -3,7 +3,6 @@ import { getVCNamePersonV1Context, getVCEmailPersonV1Context, getVCPhonePersonV1
 import {Button} from 'react-bootstrap'
 import './Home.css'
 import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
-import { CredentialShareModal } from "./CredentialShareModal";
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
 import {ModalOpener} from "./TokenModal";
@@ -325,7 +324,7 @@ class Home extends Component {
             { isAuthenticated && did &&
               <label>
                 DID:
-                <input readOnly type='text' name='did' value={ did.split(';elem:')[0] } />
+                <input readOnly type='text' name='did' value={did} />
               </label>
             }
 
