@@ -201,7 +201,9 @@ class Home extends Component {
       return alert('Please enter a credential share request token.')
     }
 
-    this.setState({ credentialShareRequestModalToken: credentialShareRequestToken })
+    this.setState({ credentialShareRequestModalToken: undefined }, () => {
+      this.setState({ credentialShareRequestModalToken: credentialShareRequestToken })
+    })
   }
 
   closeCredentialShareModal() {
@@ -359,7 +361,7 @@ class Home extends Component {
                 credential={verifiablePresentationModalCredential}
                 onClose={() => this.closeVerifiablePresentationModal()} />
         )}
-        <ModalOpener token={credentialShareRequestModalToken} />
+        {credentialShareRequestModalToken && <ModalOpener token={credentialShareRequestModalToken} />}
       </Fragment>
     )
   }
