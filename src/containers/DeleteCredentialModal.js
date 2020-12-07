@@ -7,7 +7,6 @@ export const DeleteCredentialModal = ({ isShown, loading, onDelete, onClose }) =
   return (
     <Modal
       className='Delete-Modal'
-      backdropClassName='Delete-Backdrop'
       backdrop='static'
       show={isShown}
       onHide={onClose}

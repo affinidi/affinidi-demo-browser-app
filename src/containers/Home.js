@@ -45,12 +45,13 @@ class Home extends Component {
     this.state = {
       isLoading: false,
       isDeleteModalShown: false,
+      areCredentialDetailsShown: false,
       credentials: [],
       did: null,
       verifiableCredentials: [],
       verifiablePresentationModalCredential: undefined,
       credentialShareRequestToken: processToken || undefined,
-      credentialShareRequestModalToken: processToken || undefined
+      credentialShareRequestModalToken: processToken || undefined,
     }
   }
 
@@ -76,9 +77,6 @@ class Home extends Component {
               <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.validateCredential(event, verifiableCredential) }>
                 Validate
               </Button>
-              <Button type='button' bsSize='lg' disabled={this.state.isLoading} onClick={ event => this.openVerifiablePresentationModal(event, credential) }>
-                Create VP
-              </Button>
             </div>
             { this.state.isLoading &&
               <img className='LoadingGif' src={loadingGif} alt="loading gif"/>
@@ -86,7 +84,7 @@ class Home extends Component {
             { verifiableCredential.status &&
               <svg className='Icon' width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="40" height="40" rx="20" fill="#00ABA0"/>
-                <path d="M26.1155 16L17.1145 25.01L13 20.8955" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M26.1155 16L17.1145 25.01L13 20.8955" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             }
             { verifiableCredential.status === false &&
@@ -100,10 +98,27 @@ class Home extends Component {
               </div>
             }
           </div>
-          <textarea key={this.getRandomInt()} readOnly name='credentials' rows='23' value={value} />
-          <Button bsSize='large' onClick={ event => this.openDeleteModal(event) }>
-            Delete VC
-          </Button>
+          <div className='TextareaContainer'>
+            <textarea key={this.getRandomInt()} readOnly name='credentials' rows='23' value={value}/>
+            { this.state.areCredentialDetailsShown &&
+              <Button className='HideDetailsButton' onClick={ () => this.setState({ areCredentialDetailsShown: false }) }>
+                Hide Details
+              </Button>
+            }
+            <Button className='ShareButton' onClick={event => this.openVerifiablePresentationModal(event, credential)}>
+              Share
+            </Button>
+            { !this.state.areCredentialDetailsShown &&
+              <p className='ShowDetails' onClick={ () => this.setState({ areCredentialDetailsShown: true }) }>
+                Show Details
+              </p>
+            }
+            { this.state.areCredentialDetailsShown &&
+              <p className='DeleteCredential' onClick={ event => this.openDeleteModal(event) }>
+                Delete credential
+              </p>
+            }
+          </div>
           <DeleteCredentialModal
             isShown={this.state.isDeleteModalShown}
             loading={this.state.isLoading}
@@ -149,7 +164,7 @@ class Home extends Component {
       await networkMember.deleteCredential(credentialId)
       await this.refreshCredentials(networkMember)
 
-      await this.setState({ isLoading: false, isDeleteModalShown: false })
+      await this.setState({ isLoading: false, isDeleteModalShown: false, areCredentialDetailsShown: false })
     } catch (error) {
       console.log(error)
       alert(error.message)
@@ -160,8 +175,6 @@ class Home extends Component {
 
   async openDeleteModal(event) {
     event.preventDefault()
-
-    window.scrollTo(0, 0)
 
     await this.setState({ isDeleteModalShown: true })
   }
@@ -185,7 +198,7 @@ class Home extends Component {
 
     const { credentialShareRequestToken } = this.state
 
-    if (credentialShareRequestToken.trim().length < 1) {
+    if (!credentialShareRequestToken || credentialShareRequestToken.trim().length < 1) {
       return alert('Please enter a credential share request token.')
     }
 
@@ -300,7 +313,8 @@ class Home extends Component {
       <Fragment>
         <div className='Home'>
           <form className='Form container'>
-            { isAuthenticated &&
+            <h1 className='Title'>Wallet</h1>
+            { isAuthenticated && did &&
               <div>
                 <Button bsSize='large' disabled={ haveCredentials } onClick={ event => this.createLoginMethodCredential(event) }>
                   Create Keystone VC
