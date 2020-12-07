@@ -181,6 +181,11 @@ class SdkService {
     return networkMember.createCredentialShareResponseToken(credentialShareRequestToken, suppliedCredentials)
   }
 
+  async createPresentationFromChallenge(credentialShareRequestToken, suppliedCredentials, domain) {
+    const networkMember = await this.init()
+    return networkMember.createPresentationFromChallenge(credentialShareRequestToken, suppliedCredentials, domain)
+  }
+
   async createCredentialOfferResponseToken(credentialOfferToken) {
     const networkMember = await this.init()
     return networkMember.createCredentialOfferResponseToken(credentialOfferToken)

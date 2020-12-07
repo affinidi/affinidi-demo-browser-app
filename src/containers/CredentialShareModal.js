@@ -26,10 +26,12 @@ async function getCredentials(credentialShareRequestToken) {
 }
 
 async function createCredentialShareResponseToken(credentialShareRequestToken, credentials) {
-    return window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
+    const credentialShareResponseToken = await window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
+    const verifiablePresentation = await window.sdk.createPresentationFromChallenge(credentialShareRequestToken, credentials, 'domain')
+    return { credentialShareResponseToken, verifiablePresentation }
 }
 
-async function sendVPToCallback(callbackURL, vp) {
+async function sendVPToCallback(callbackURL, { verifiablePresentation }) {
     const response = await fetch(callbackURL, {
         method: 'POST',
         mode: 'cors',
@@ -38,7 +40,7 @@ async function sendVPToCallback(callbackURL, vp) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ vp })
+        body: JSON.stringify({ vp: verifiablePresentation })
     })
 
     if (response.status < 200 || response.status > 299) {
@@ -61,7 +63,7 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         [credentialShareRequestToken]
     )
     const [
-        { loading: createVPLoading, value: credentialShareResponseToken, error: createVPError },
+        { loading: createVPLoading, value: presentation, error: createVPError },
         onCreateVP
     ] = useAsyncFn(
         () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
@@ -69,17 +71,17 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
     );
 
     const [{ loading: callbackLoading, value: callbackResponse, error: callbackError }, sendVP] = useAsyncFn(
-        () => sendVPToCallback(callbackURL, credentialShareResponseToken),
-        [callbackURL, credentialShareResponseToken]
+        () => sendVPToCallback(callbackURL, presentation),
+        [callbackURL, presentation]
     )
 
     useEffect(() => {
-        if (callbackURL && credentialShareResponseToken) {
+        if (callbackURL && presentation) {
             sendVP()
         }
-    }, [callbackURL, credentialShareResponseToken, sendVP])
+    }, [callbackURL, presentation, sendVP])
 
-    const shareButtonDisabled = credentialsLoading || !!credentialsError || credentials.length < 1 || createVPLoading || callbackLoading || !!credentialShareResponseToken
+    const shareButtonDisabled = credentialsLoading || !!credentialsError || credentials.length < 1 || createVPLoading || callbackLoading || !!presentation
     const alert = getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError)
 
     useEffect(() => {
@@ -143,12 +145,12 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                         Accept
                     </Button>
                 </FormGroup>
-                <FormGroup controlId='credentialShareResponseToken' bsSize='large'>
+                <FormGroup controlId='presentation' bsSize='large'>
                     <ControlLabel>Credential Share Response Token</ControlLabel>
                     <FormControl
                         readOnly
                         type='text'
-                        value={createVPLoading ? '-' : credentialShareResponseToken || ''}
+                        value={createVPLoading ? '-' : presentation && presentation.credentialShareResponseToken || ''}
                     />
                 </FormGroup>
                 {alert &&
