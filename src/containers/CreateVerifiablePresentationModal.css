@@ -8,7 +8,7 @@
 }
 
 .ShareModal .Body {
-  padding: 75px 40px 45px 40px;
+  padding: 75px 40px 25px 40px;
 }
 
 .ShareModal .Title {
@@ -85,8 +85,8 @@
   margin-bottom: 0;
 }
 
-.ShareModal .Alert {
-  margin: 20px 0 0 0;
+.ShareModal .Response {
+  margin-top: 20px;
 }
 
 @media screen and (max-width: 767px) {
