@@ -57,20 +57,20 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
     const { requesterDid, callbackURL } = parseInfoFromToken(credentialShareRequestToken)
 
     const { loading: credentialsLoading, value: credentials, error: credentialsError } = useAsync(
-      () => getCredentials(credentialShareRequestToken),
-      [credentialShareRequestToken]
+        () => getCredentials(credentialShareRequestToken),
+        [credentialShareRequestToken]
     )
     const [
         { loading: createVPLoading, value: credentialShareResponseToken, error: createVPError },
         onCreateVP
     ] = useAsyncFn(
-      () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
-      [credentialShareRequestToken, credentials]
+        () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
+         [credentialShareRequestToken, credentials]
     );
 
     const [{ loading: callbackLoading, value: callbackResponse, error: callbackError }, sendVP] = useAsyncFn(
-      () => sendVPToCallback(callbackURL, credentialShareResponseToken),
-      [callbackURL, credentialShareResponseToken]
+         () => sendVPToCallback(callbackURL, credentialShareResponseToken),
+        [callbackURL, credentialShareResponseToken]
     )
 
     useEffect(() => {
@@ -94,8 +94,8 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
 
     return (
         <Modal
-          show={credentialShareRequestToken !== undefined}
-          onHide={onClose}
+            show={credentialShareRequestToken !== undefined}
+            onHide={onClose}
         >
             <Modal.Header closeButton>
                 <Modal.Title>Share Credentials</Modal.Title>
@@ -104,17 +104,17 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                 <FormGroup controlId='credentialShareRequestToken' bsSize='large'>
                     <ControlLabel>Credential Share Request Token</ControlLabel>
                     <FormControl
-                      readOnly
-                      type='text'
-                      value={credentialShareRequestToken}
+                        readOnly
+                        type='text'
+                        value={credentialShareRequestToken}
                     />
                 </FormGroup>
                 <FormGroup controlId='requesterDid' bsSize='large'>
                     <ControlLabel>Requester Did</ControlLabel>
                     <FormControl
-                      readOnly
-                      type='text'
-                      value={requesterDid || '-'}
+                        readOnly
+                        type='text'
+                        value={requesterDid || '-'}
                     />
                 </FormGroup>
                 <FormGroup controlId='credentials' bsSize='large'>
@@ -146,9 +146,9 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                 <FormGroup controlId='credentialShareResponseToken' bsSize='large'>
                     <ControlLabel>Credential Share Response Token</ControlLabel>
                     <FormControl
-                      readOnly
-                      type='text'
-                      value={createVPLoading ? '-' : credentialShareResponseToken || ''}
+                        readOnly
+                        type='text'
+                        value={createVPLoading ? '-' : credentialShareResponseToken || ''}
                     />
                 </FormGroup>
                 {alert &&
