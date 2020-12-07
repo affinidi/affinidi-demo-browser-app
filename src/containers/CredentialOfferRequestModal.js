@@ -27,7 +27,7 @@ async function acceptOfferRequest(callbackURL, offerRequestToken) {
 async function sendResponseTokenToCallback(callbackURL, responseToken) {
     const response = await fetch(callbackURL, {
         method: 'POST',
-        mode: 'cors',
+        mode: 'no-cors',
         cache: 'no-cache',
         credentials: 'omit',
         headers: {

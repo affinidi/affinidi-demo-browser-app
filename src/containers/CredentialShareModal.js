@@ -34,7 +34,7 @@ async function createCredentialShareResponseToken(credentialShareRequestToken, c
 async function sendVPToCallback(callbackURL, { verifiablePresentation }) {
     const response = await fetch(callbackURL, {
         method: 'POST',
-        mode: 'cors',
+        mode: 'no-cors',
         cache: 'no-cache',
         credentials: 'omit',
         headers: {
