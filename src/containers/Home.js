@@ -275,10 +275,10 @@ class Home extends Component {
 
     if (networkMember) {
       const requesterDid = this.state.did
-
       let credential
       try {
-        credential = await networkMember.signCredential(claim, credentialMetadata, { requesterDid })
+        const issuer = await window.sdk.initTestKeyStoneIssuer()
+        credential = await issuer.signCredential(claim, credentialMetadata, { requesterDid })
 
         await networkMember.saveCredentials([ credential ])
         await this.refreshCredentials(networkMember)
