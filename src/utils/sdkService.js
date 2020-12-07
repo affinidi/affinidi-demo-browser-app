@@ -14,6 +14,9 @@ const SDK_OPTIONS = {
   apiKey: process.env.REACT_APP_API_KEY
 }
 
+const keyStoneTestEncryptionKey = process.env.REACT_APP_KEYSTONE_TEST_ENCRYPTION_KEY
+const keyStoneTestEncryptedSeed = process.env.REACT_APP_KEYSTONE_TEST_ENCRYPTED_SEED
+
 class SDKConfigurator {
   static getSdkOptions() {
     const { env, apiKey } = SDK_OPTIONS
@@ -43,6 +46,14 @@ class SdkService {
     const encryptionKey = await WalletStorageService.pullEncryptionKey(accessToken)
 
     return new this.sdk(encryptionKey, encryptedSeed, { ...SDK_OPTIONS, cognitoUserTokens: { accessToken }})
+  }
+
+  async initTestKeyStoneIssuer() {
+    if (keyStoneTestEncryptionKey && keyStoneTestEncryptedSeed) {
+      return new this.sdk(keyStoneTestEncryptionKey, keyStoneTestEncryptedSeed, SDK_OPTIONS)
+    }
+
+    return this.init()
   }
 
   async signOut() {
