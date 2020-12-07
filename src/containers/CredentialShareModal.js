@@ -1,32 +1,17 @@
-import React, {useEffect} from "react";
-import {Alert, Table, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
-import {useAsync, useAsyncFn} from "react-use";
+import React, {useEffect, useState} from "react";
+import {Alert, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
 import {useTokenModal} from "./TokenModal";
+
+import './CredentialShareModal.css'
 
 function parseInfoFromToken(token) {
     try {
         const { payload } = window.sdk.parseToken(token)
-        const callbackURL = (payload.interactionToken || {}).callbackURL || undefined
-        const requesterDid = payload.iss
 
-        return { requesterDid, callbackURL }
+        return (payload.interactionToken || {}).callbackURL || undefined
     } catch(err) {
-        return {}
+        return undefined
     }
-}
-
-async function getCredentials(credentialShareRequestToken) {
-    const credentials = await window.sdk.getCredentials(credentialShareRequestToken)
-
-    if (!Array.isArray(credentials) || credentials.length < 1) {
-        throw new Error('No credential found for this request!')
-    }
-
-    return credentials
-}
-
-async function createCredentialShareResponseToken(credentialShareRequestToken, credentials) {
-    return window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
 }
 
 async function sendVPToCallback(callbackURL, vp) {
@@ -49,140 +34,149 @@ async function sendVPToCallback(callbackURL, vp) {
         return undefined
     }
 
-    return response.json()
+    return await response.json()
 }
 
-export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) => {
+export const CredentialShareModal = ({ credentials, credentialShareRequestToken, onClose }) => {
+    const [requesterDid, setRequesterDid] = useState('')
+    const [isInputVisible, setIsInputVisible] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
+    const [alert, setAlert] = useState(null)
+    const [requestToken, setRequestToken] = useState('')
+
     const { open: openTokenModal } = useTokenModal()
-    const { requesterDid, callbackURL } = parseInfoFromToken(credentialShareRequestToken)
-
-    const { loading: credentialsLoading, value: credentials, error: credentialsError } = useAsync(
-        () => getCredentials(credentialShareRequestToken),
-        [credentialShareRequestToken]
-    )
-    const [
-        { loading: createVPLoading, value: credentialShareResponseToken, error: createVPError },
-        onCreateVP
-    ] = useAsyncFn(
-        () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
-        [credentialShareRequestToken, credentials]
-    );
-
-    const [{ loading: callbackLoading, value: callbackResponse, error: callbackError }, sendVP] = useAsyncFn(
-        () => sendVPToCallback(callbackURL, credentialShareResponseToken),
-        [callbackURL, credentialShareResponseToken]
-    )
 
     useEffect(() => {
-        if (callbackURL && credentialShareResponseToken) {
-            sendVP()
+        if (credentialShareRequestToken) {
+            setRequestToken(credentialShareRequestToken)
+            setIsInputVisible(false)
         }
-    }, [callbackURL, credentialShareResponseToken, sendVP])
 
-    const shareButtonDisabled = credentialsLoading || !!credentialsError || credentials.length < 1 || createVPLoading || callbackLoading || !!credentialShareResponseToken
-    const alert = getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError)
+    }, [credentialShareRequestToken])
 
-    useEffect(() => {
+    async function share() {
+        if (isLoading) return
+
+        await setIsLoading(true)
+
+        if (!requestToken) {
+            if (!requesterDid) {
+                setAlert({ message: 'Please enter requester did', bsStyle: 'danger' })
+                setIsLoading(false)
+
+                return
+            }
+
+            const credentialRequirements = credentials.map(cred => {
+                return { type: cred.type }
+            })
+
+            try {
+                const requestToken = await window.sdk.createCredentialShareRequestTokenFromRequesterDid(credentialRequirements, requesterDid)
+                setRequestToken(requestToken)
+            } catch (error) {
+                setAlert({ message: `There was an error while creating share request token. Error: ${error.message}`, bsStyle: 'danger' })
+                setIsLoading(false)
+
+                return
+            }
+        }
+
+        let credentialShareResponseToken
+        try {
+            setAlert({ message: 'Creating VP.', bsStyle: 'warning' })
+
+            credentialShareResponseToken = await window.sdk.createCredentialShareResponseToken(credentials, requestToken)
+        } catch (error) {
+            setAlert({ message: `Could not create VP. Error: ${error.message}`, bsStyle: 'danger' })
+            await setIsLoading(false)
+
+            return
+        }
+
+        const callbackURL = parseInfoFromToken(requestToken)
+        if (!callbackURL) {
+            setAlert({ message: 'There was an error while parsing info from token.', bsStyle: 'danger' })
+            await setIsLoading(false)
+
+            return
+        }
+
+        let callbackResponse
+        try {
+            setAlert({ message: 'Sending VP to callbackURL.', bsStyle: 'warning' })
+
+            callbackResponse = await sendVPToCallback(callbackURL, credentialShareResponseToken)
+
+            setAlert({ message: 'Sent VP to callbackURL successfully.', bsStyle: 'success' })
+        } catch (error) {
+            setAlert({ message: `There was an error sending VP to callbackURL. Error: ${error.message}`, bsStyle: 'danger' })
+            await setIsLoading(false)
+
+            return
+        }
+
         if (callbackResponse && callbackResponse.requestToken) {
             const { requestToken } = callbackResponse
 
             if (openTokenModal(requestToken)) {
+                await setIsLoading(false)
+
                 onClose()
             }
         }
-    }, [callbackResponse, openTokenModal, onClose])
+
+        await setIsLoading(false)
+    }
 
     return (
         <Modal
-            show={credentialShareRequestToken !== undefined}
+          className='ShareModal'
+            show={credentials.length > 0}
             onHide={onClose}
         >
-            <Modal.Header closeButton>
-                <Modal.Title>Share Credentials</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <FormGroup controlId='credentialShareRequestToken' bsSize='large'>
-                    <ControlLabel>Credential Share Request Token</ControlLabel>
-                    <FormControl
-                        readOnly
-                        type='text'
-                        value={credentialShareRequestToken}
-                    />
-                </FormGroup>
-                <FormGroup controlId='requesterDid' bsSize='large'>
-                    <ControlLabel>Requester Did</ControlLabel>
-                    <FormControl
-                        readOnly
-                        type='text'
-                        value={requesterDid || '-'}
-                    />
-                </FormGroup>
-                <FormGroup controlId='credentials' bsSize='large'>
-                    <ControlLabel>Credentials</ControlLabel>
-                    <Table striped bordered hover size='sm'>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>id</th>
-                                <th>type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {(credentials || []).map((credential, idx) => (
-                                <tr key={credential.id}>
-                                    <td>{idx + 1}</td>
-                                    <td>{credential.id}</td>
-                                    <td>{JSON.stringify(credential.type)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                </FormGroup>
+            <Modal.Body className='Body'>
+                <h1 className='Title'>Share credential</h1>
+                <p className='Info'>You can easily share this credential with anyone you like.</p>
+                { isInputVisible &&
+                    <FormGroup controlId='requesterDid' bsSize='large'>
+                        <ControlLabel className='SubTitle'>Requester Did</ControlLabel>
+                        <FormControl
+                          autoFocus
+                          className='Input'
+                          readOnly={isLoading}
+                          type='text'
+                          value={requesterDid}
+                          onChange={event => setRequesterDid(event.target.value)}
+                        />
+                    </FormGroup>
+                }
+                <p className='SubTitle'>Sharing options</p>
+                <div className='Radios'>
+                    <label className='RadioLabel'>
+                        <input className='Radio' type="radio" id="email" name="share" disabled/>
+                        Share via email
+                    </label>
+                    <label className='RadioLabel'>
+                        <input className='Radio' type="radio" id="whatsApp" name="share" disabled/>
+                        Share via WhatsApp
+                    </label>
+                    <label className='RadioLabel'>
+                        <input className='Radio' type="radio" id="link" name="share" disabled/>
+                        Share by link
+                    </label>
+                </div>
                 <FormGroup>
-                    <Button bsSize='large' disabled={shareButtonDisabled} onClick={onCreateVP}>
-                        Accept
+                    <Button className='Button' disabled={isLoading} onClick={() => share()}>
+                        Share credential
                     </Button>
                 </FormGroup>
-                <FormGroup controlId='credentialShareResponseToken' bsSize='large'>
-                    <ControlLabel>Credential Share Response Token</ControlLabel>
-                    <FormControl
-                        readOnly
-                        type='text'
-                        value={createVPLoading ? '-' : credentialShareResponseToken || ''}
-                    />
-                </FormGroup>
-                {alert &&
+                { alert &&
                     <FormGroup>
-                        <Alert bsStyle={alert.bsStyle} children={alert.message} />
+                        <Alert className='Alert' bsStyle={alert.bsStyle} children={alert.message} />
                     </FormGroup>
                 }
             </Modal.Body>
         </Modal>
     )
-}
-
-function getAlert(callbackURL, callbackLoading, callbackResponse, callbackError, credentialsError, createVPError) {
-    if (callbackURL && (callbackLoading || callbackResponse || callbackError)) {
-        if (callbackLoading) {
-            return { message: 'Sending VP to callbackURL.', bsStyle: 'warning' }
-        }
-
-        if (callbackResponse) {
-            return { message: 'Sent VP to callbackURL successfully.', bsStyle: 'success' }
-        }
-
-        if (callbackError) {
-            return { message: `There was an error sending VP to callbackURL. Error: ${callbackError.message}`, bsStyle: 'danger' }
-        }
-    }
-
-    if (credentialsError) {
-        return { message: `Could not list credentials. Error: ${credentialsError.message}`, bsStyle: 'danger' }
-    }
-
-    if (createVPError) {
-        return { message: `Could not create VP. Error: ${createVPError.message}`, bsStyle: 'danger' }
-    }
-
-    return undefined
 }
