@@ -3,9 +3,9 @@ import { getVCNamePersonV1Context, getVCEmailPersonV1Context, getVCPhonePersonV1
 import {Button} from 'react-bootstrap'
 import './Home.css'
 import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentationModal";
-import { CredentialShareModal } from "./CredentialShareModal";
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
+import {ModalOpener} from "./TokenModal";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -201,7 +201,9 @@ class Home extends Component {
       return alert('Please enter a credential share request token.')
     }
 
-    this.setState({ credentialShareRequestModalToken: credentialShareRequestToken })
+    this.setState({ credentialShareRequestModalToken: undefined }, () => {
+      this.setState({ credentialShareRequestModalToken: credentialShareRequestToken })
+    })
   }
 
   closeCredentialShareModal() {
@@ -324,7 +326,7 @@ class Home extends Component {
             { isAuthenticated && did &&
               <label>
                 DID:
-                <input readOnly type='text' name='did' value={ did.split(';elem:')[0] } />
+                <input readOnly type='text' name='did' value={did} />
               </label>
             }
 
@@ -359,11 +361,7 @@ class Home extends Component {
                 credential={verifiablePresentationModalCredential}
                 onClose={() => this.closeVerifiablePresentationModal()} />
         )}
-        {credentialShareRequestModalToken && (
-            <CredentialShareModal
-                credentialShareRequestToken={credentialShareRequestModalToken}
-                onClose={() => this.closeCredentialShareModal()} />
-        )}
+        {credentialShareRequestModalToken && <ModalOpener token={credentialShareRequestModalToken} />}
       </Fragment>
     )
   }

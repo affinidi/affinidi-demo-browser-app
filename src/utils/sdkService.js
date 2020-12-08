@@ -1,17 +1,17 @@
-import decodeEnv from './decodeEnv'
 import { AffinityWallet as Wallet } from '@affinidi/wallet-browser-sdk'
 import { __dangerous } from '@affinidi/wallet-core-sdk'
 import { Affinidi } from '@affinidi/common'
 import JwtService from "@affinidi/common/dist/services/JwtService";
 import { randomBytes } from "@affinidi/common/dist/shared/randomBytes";
 import SdkError from "@affinidi/wallet-core-sdk/dist/shared/SdkError";
+import config from "../config";
 
 const { WalletStorageService } = __dangerous
 
 const SDK_AUTHENTICATION_LOCAL_STORAGE_KEY = 'affinidi:accessToken'
 const SDK_OPTIONS = {
-  env: decodeEnv(process.env.REACT_APP_ENVIRONMENT || process.env.NODE_ENV),
-  apiKey: process.env.REACT_APP_API_KEY
+  env: config.env,
+  apiKey: config.apiKey
 }
 
 const keyStoneTestEncryptionKey = process.env.REACT_APP_KEYSTONE_TEST_ENCRYPTION_KEY

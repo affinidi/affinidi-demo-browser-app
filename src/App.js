@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import Routes from './Routes'
 import { Link, withRouter } from 'react-router-dom'
 import { LinkContainer } from 'react-router-bootstrap'
@@ -7,10 +7,22 @@ import './App.css'
 
 import SdkService from './utils/sdkService'
 import {TokenModalProvider} from "./containers/TokenModal";
+import {MessageService} from "./utils/messageService";
+import MessageListener from "./containers/MessageListener";
 
 function App(props) {
   window.sdk = new SdkService()
   const [isAuthenticated, userHasAuthenticated] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.sdk.init().then(networkMember => {
+        window.messageService = new MessageService(networkMember)
+      }).catch(console.error)
+    } else {
+      window.messageService = null
+    }
+  }, [isAuthenticated])
 
   async function handleLogout(event) {
     event.preventDefault()
@@ -28,6 +40,7 @@ function App(props) {
   return (
     <div className='App'>
       <TokenModalProvider>
+        {isAuthenticated && <MessageListener />}
         <Navbar>
           <Navbar.Header>
             <Navbar.Brand>

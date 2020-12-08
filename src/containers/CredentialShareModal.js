@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import {Alert, Table, Button, ControlLabel, FormControl, FormGroup, Modal} from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import {Alert, Table, Button, ControlLabel, FormControl, Checkbox, FormGroup, Modal} from "react-bootstrap";
 import {useAsync, useAsyncFn} from "react-use";
 import {useTokenModal} from "./TokenModal";
 
@@ -25,9 +25,14 @@ async function getCredentials(credentialShareRequestToken) {
     return credentials
 }
 
-async function createCredentialShareResponseToken(credentialShareRequestToken, credentials) {
+async function createCredentialShareResponseToken(credentialShareRequestToken, credentials, requesterDid, shouldSendMessage) {
     const credentialShareResponseToken = await window.sdk.createCredentialShareResponseToken(credentialShareRequestToken, credentials)
     const verifiablePresentation = await window.sdk.createPresentationFromChallenge(credentialShareRequestToken, credentials, 'domain')
+
+    if (shouldSendMessage && requesterDid) {
+        await window.messageService.send(requesterDid, { token: credentialShareResponseToken })
+    }
+
     return { credentialShareResponseToken, verifiablePresentation }
 }
 
@@ -58,6 +63,8 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
     const { open: openTokenModal } = useTokenModal()
     const { requesterDid, callbackURL } = parseInfoFromToken(credentialShareRequestToken)
 
+    const [shouldSendMessage, setShouldSendMessage] = useState(true);
+
     const { loading: credentialsLoading, value: credentials, error: credentialsError } = useAsync(
         () => getCredentials(credentialShareRequestToken),
         [credentialShareRequestToken]
@@ -66,8 +73,8 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         { loading: createVPLoading, value: presentation, error: createVPError },
         onCreateVP
     ] = useAsyncFn(
-        () => createCredentialShareResponseToken(credentialShareRequestToken, credentials),
-        [credentialShareRequestToken, credentials]
+        () => createCredentialShareResponseToken(credentialShareRequestToken, credentials, requesterDid, shouldSendMessage),
+        [credentialShareRequestToken, credentials, requesterDid, shouldSendMessage]
     );
 
     const [{ loading: callbackLoading, value: callbackResponse, error: callbackError }, sendVP] = useAsyncFn(
@@ -144,6 +151,13 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
                     <Button bsSize='large' disabled={shareButtonDisabled} onClick={onCreateVP}>
                         Accept
                     </Button>
+                    <Checkbox
+                        inline
+                        disabled={shareButtonDisabled}
+                        checked={shouldSendMessage}
+                        onClick={() => setShouldSendMessage(!shouldSendMessage)}
+                        style={{ marginLeft: 10 }}
+                    >Send token to verifier</Checkbox>
                 </FormGroup>
                 <FormGroup controlId='presentation' bsSize='large'>
                     <ControlLabel>Credential Share Response Token</ControlLabel>
