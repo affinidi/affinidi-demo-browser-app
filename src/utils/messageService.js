@@ -4,7 +4,6 @@ import config from "../config";
 const MESSAGE_SERVICE_BASE_URL = config.messagesBaseUrl + "/api/v1";
 const DEFAULT_HEADERS = {
     "Content-Type": "application/json",
-    "Api-Key": config.apiKeyHash,
 };
 
 export class MessageService {
@@ -21,7 +20,7 @@ export class MessageService {
         const encryptedMessage = await this._networkMember.createEncryptedMessage(did, message);
         const token = await this.getToken();
 
-        return MessageService.execute("/messages", "POST", token, {
+        return this.execute("/messages", "POST", token, {
             toDid: did,
             message: encryptedMessage,
         });
@@ -29,7 +28,7 @@ export class MessageService {
 
     async getAll() {
         const token = await this.getToken();
-        const { messages } = await MessageService.execute(
+        const { messages } = await this.execute(
             "/messages",
             "GET",
             token
@@ -46,18 +45,17 @@ export class MessageService {
 
     async delete(id) {
         const token = await this.getToken();
-        return MessageService.execute("/message/" + id, "DELETE", token);
+        return this.execute("/message/" + id, "DELETE", token);
     }
 
     async getToken() {
-        // TODO: check if token is expired?
-        // if (this._token !== null) {
-        // return this._token;
-        // }
+        if (this._token && !this._affinidiDidAuthService.isTokenExpired(this._token)) {
+         return this._token;
+        }
 
         const audienceDid = this._networkMember.did;
 
-        const requestToken = await MessageService.execute(
+        const requestToken = await this.execute(
             "/did-auth/create-did-auth-request",
             "POST",
             undefined,
@@ -71,7 +69,7 @@ export class MessageService {
         return (this._token = token);
     }
 
-    static async execute(
+    async execute(
         path,
         method,
         token,
@@ -85,6 +83,7 @@ export class MessageService {
             credentials: "omit",
             headers: {
                 ...DEFAULT_HEADERS,
+                'Api-Key': this._networkMember._accessApiKey,
                 ...(token ? { Authorization: "Bearer " + token } : {}),
             },
             body: JSON.stringify(data),
