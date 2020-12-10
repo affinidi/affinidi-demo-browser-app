@@ -95,9 +95,7 @@ export const CredentialShareModal = ({ credentialShareRequestToken, onClose }) =
         if (callbackResponse && callbackResponse.requestToken) {
             const { requestToken } = callbackResponse
 
-            if (openTokenModal(requestToken)) {
-                onClose()
-            }
+            openTokenModal(requestToken)
         }
     }, [callbackResponse, openTokenModal, onClose])
 

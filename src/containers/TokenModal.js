@@ -50,6 +50,8 @@ function getModal(token, typ, close) {
 export const TokenModalProvider = ({ children }) => {
     const [tokenAndTyp, setTokenAndTyp] = useState()
 
+    // TODO: when closing we need to check if the closing modal is still shown
+    // e.g. share modal is open, state changes to offer modal, share modal closes. this should not call below function.
     function close() {
         setTokenAndTyp(undefined)
     }
