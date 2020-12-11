@@ -21,6 +21,7 @@ async function acceptOfferRequest(callbackURL, offerRequestToken) {
     const { credentials } = await sendResponseTokenToCallback(callbackURL, credentialOfferResponseToken)
 
     await window.sdk.saveCredentials(credentials)
+    window.setTimeout(() => window.location.reload(), 3000)
     return credentials
 }
 

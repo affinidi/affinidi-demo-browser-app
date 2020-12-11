@@ -5,7 +5,7 @@ import { Alert } from "react-bootstrap";
 import {useTokenModal} from "./TokenModal";
 
 const KNOWN_TOKEN_TYPS = ["credentialOfferRequest", "credentialRequest"];
-const INTERVAL_MS = 5 * 1000;
+const INTERVAL_MS = 10 * 1000;
 
 const handleError = (func) => async () => {
     try {
