@@ -6,6 +6,7 @@ import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentatio
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
 import {ModalOpener} from "./TokenModal";
+import CredentialCard from "../vendors/CredentailCard";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -54,20 +55,11 @@ class Home extends Component {
     }
   }
 
-  getRandomInt() {
-    const min = 1
-    const max = 100000
-
-    return Math.floor(Math.random() * (max - min)) + min
-  }
-
   renderCredentials(verifiableCredentials) {
     const credentialsList = []
 
     for (const [key, verifiableCredential] of verifiableCredentials.entries()) {
       const { credential } = verifiableCredential
-
-      const value = JSON.stringify(credential, undefined, '\t')
 
       credentialsList.push(
         <div key={key}>
@@ -98,7 +90,9 @@ class Home extends Component {
             }
           </div>
           <div className='TextareaContainer'>
-            <textarea key={this.getRandomInt()} readOnly name='credentials' rows='23' value={value}/>
+            <CredentialCard
+              credential={credential}
+            />
             { this.state.areCredentialDetailsShown &&
               <Button className='HideDetailsButton' onClick={ () => this.setState({ areCredentialDetailsShown: false }) }>
                 Hide Details
