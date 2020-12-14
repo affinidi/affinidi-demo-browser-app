@@ -6,7 +6,7 @@ import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentatio
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
 import {ModalOpener} from "./TokenModal";
-import CredentialCard from "../components/CredentailCard";
+import CredentialCard from "../vendors/CredentailCard";
 
 const loadingGif = require('../static/images/loading.gif')
 
