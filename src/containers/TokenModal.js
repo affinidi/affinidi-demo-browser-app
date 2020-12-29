@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState} from "react";
 import {CreateOfferRequestModal} from "./CredentialOfferRequestModal";
 import {CredentialShareModal} from "./CredentialShareModal";
 
@@ -73,14 +73,14 @@ export const ModalOpener = ({ token }) => {
             const couldOpen = open(token)
             setOpenError(!couldOpen)
         }
-    }, [token])
+    }, [token, open])
 
     useEffect(() => {
         if (openError) {
             alert('could not open modal for token: ' + token)
             setOpenError(false)
         }
-    }, [openError])
+    }, [token, openError])
 
     return null
 }

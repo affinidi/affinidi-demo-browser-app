@@ -5,11 +5,11 @@ import { Checkbox, Button, FormGroup, FormControl, ControlLabel } from 'react-bo
 import './Signup.css'
 
 export default function Signup(props) {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('afshan.aman')  // TODO: remove
+  const [password, setPassword] = useState('Afshan@81')
   const [isUserNameFieldVisible, setIsUserNameFieldVisible] = useState(false)
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false)
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(true) // TODO: set to false
+  const [confirmPassword, setConfirmPassword] = useState('Afshan@81') // TODO: remove
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -33,9 +33,9 @@ export default function Signup(props) {
       return
     }
 
-    try {
+    try {      
       const token = await window.sdk.signUp(username, password)
-
+        
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
 
       if (isUsername) {
@@ -43,7 +43,7 @@ export default function Signup(props) {
 
         props.history.push('/', { username })
       } else {
-        props.history.push('/confirm-signup', { token })
+        props.history.push('/confirm-signup', { username, token })
       }
 
     } catch (error) {

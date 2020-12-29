@@ -5,6 +5,7 @@ function decodeEnv(env) {
   switch(env) {
     case 'dev':
     case 'prod':
+    case 'local':
       return env
     case 'development': return 'dev'
     case 'production': return 'prod'

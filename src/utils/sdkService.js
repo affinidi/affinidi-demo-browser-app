@@ -5,6 +5,7 @@ import JwtService from "@affinidi/common/dist/services/JwtService";
 import { randomBytes } from "@affinidi/common/dist/shared/randomBytes";
 import SdkError from "@affinidi/wallet-core-sdk/dist/shared/SdkError";
 import config from "../config";
+import cloudWalletApi from './apiService'
 
 const { WalletStorageService } = __dangerous
 
@@ -22,6 +23,9 @@ class SDKConfigurator {
     const { env, apiKey } = SDK_OPTIONS
     const options = Wallet.setEnvironmentVarialbles({ env })
 
+    console.log('in getSdkOptions')
+    console.log(options)
+
     return Object.assign({}, options, { apiKey, env })
   }
 }
@@ -33,17 +37,26 @@ class SdkService {
   }
 
   async init() {
+    console.log('in init')
     const accessToken = localStorage.getItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY)
-
+    // console.log('accessToken: ', accessToken)
     if (!accessToken) {
       throw new SdkError('COR-9')
     }
 
     const { env, apiKey } = SDK_OPTIONS
+    console.log('env: ', env)
     const { keyStorageUrl } = SDKConfigurator.getSdkOptions(env, apiKey)
 
+    console.log('keyStorageUrl: ', keyStorageUrl)
+
     const encryptedSeed = await WalletStorageService.pullEncryptedSeed(accessToken, keyStorageUrl, SDK_OPTIONS)
+
+    console.log('encryptedSeed: ', encryptedSeed)
+
     const encryptionKey = await WalletStorageService.pullEncryptionKey(accessToken)
+
+    console.log('encryptionKey: ', encryptionKey)
 
     return new this.sdk(encryptionKey, encryptedSeed, { ...SDK_OPTIONS, cognitoUserTokens: { accessToken }})
   }
@@ -63,17 +76,21 @@ class SdkService {
   }
 
   async signUp(username, password, messageParameters) {
-    const token = await this.sdk.signUp(username, password, SDK_OPTIONS, messageParameters)
+    const signUpParams = { username, password }
+
+    const { data: token } =  await cloudWalletApi.post('/users/signup', signUpParams)
+
     return token
   }
 
   async confirmSignUp(token, confirmationCode, options = {}) {
-    const networkMember = await this.sdk.confirmSignUp(
-        token,
-        confirmationCode,
-        { ...options, ...SDK_OPTIONS}
-    )
-    SdkService._saveAccessTokenToLocalStorage(networkMember)
+    const signUpConfirmParams = { token, confirmationCode }
+
+    const response =  await cloudWalletApi.post('/users/signup/confirm', signUpConfirmParams)
+
+    const { accessToken, did } = response.data
+
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
   async resendSignUpConfirmationCode(username, messageParameters) {
@@ -83,13 +100,17 @@ class SdkService {
   }
 
   async getDidAndCredentials() {
+        console.log('in getDidAndCredentials')
     const networkMember = await this.init()
 
-    const did = networkMember.did
+    const did = localStorage.getItem('did')
+    console.log(did)
 
     let credentials = []
     try {
+      console.log('before networkMember.getCredentials()')
       credentials = await networkMember.getCredentials()
+      console.log(credentials)
     } catch (error) {
       console.log('no credentials', error)
     }
@@ -206,9 +227,19 @@ class SdkService {
     return JwtService.fromJWT(token)
   }
 
+  // TODO: when all the sdk methods are converted to API calls, remove one of these methods
   static _saveAccessTokenToLocalStorage(networkMember) {
     try {
       localStorage.setItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY, networkMember.accessToken)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  static _saveLoginCredentialsToLocalStorage(accessToken, did) {
+    try {
+      localStorage.setItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY, accessToken)
+      localStorage.setItem('did', did)
+
     } catch (err) {
       console.error(err)
     }

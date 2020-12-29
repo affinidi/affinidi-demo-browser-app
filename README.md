@@ -12,7 +12,11 @@ generated using npm.
 ## Environment
 
 API key is required to use this application. You can get the API key [here](https://apikey.affinidi.com/)
-Add the API key created above to your package.json into the `start` and `build` commands like this:
+
+Using the API KEY:
+- Option 1: create an `.env` file by `cp .env.example .env` and replacing the value in the `<<>>`
+  
+- Option 2: Add the API key created above to your package.json into the `start` and `build` commands like this:
 
 ```
 ......
