@@ -10,11 +10,13 @@ export default function CompleteLoginChallenge(props) {
   }
 
   async function handleSubmit(event) {
+    console.log('CompleteLoginChallenge # handleSubmit')
     event.preventDefault()
 
     try {
       const { token } = props.location.state
 
+      console.log('token: ', token)
       await window.sdk.completeLoginChallenge(token, confirmationCode)
 
       props.userHasAuthenticated(true)

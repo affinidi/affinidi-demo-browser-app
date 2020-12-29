@@ -23,7 +23,7 @@ class SDKConfigurator {
     const { env, apiKey } = SDK_OPTIONS
     const options = Wallet.setEnvironmentVarialbles({ env })
 
-    console.log('in getSdkOptions')
+    console.log('sdkService # getSdkOptions')
     console.log(options)
 
     return Object.assign({}, options, { apiKey, env })
@@ -37,9 +37,8 @@ class SdkService {
   }
 
   async init() {
-    console.log('in init')
+    console.log('sdkService # init')
     const accessToken = localStorage.getItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY)
-    // console.log('accessToken: ', accessToken)
     if (!accessToken) {
       throw new SdkError('COR-9')
     }
@@ -49,6 +48,7 @@ class SdkService {
     const { keyStorageUrl } = SDKConfigurator.getSdkOptions(env, apiKey)
 
     console.log('keyStorageUrl: ', keyStorageUrl)
+    // console.log('accessToken: ', accessToken)
 
     const encryptedSeed = await WalletStorageService.pullEncryptedSeed(accessToken, keyStorageUrl, SDK_OPTIONS)
 
@@ -100,7 +100,7 @@ class SdkService {
   }
 
   async getDidAndCredentials() {
-    console.log('in getDidAndCredentials')
+    console.log('sdkService # getDidAndCredentials')
     const networkMember = await this.init()
 
     const did = localStorage.getItem('did')
@@ -148,16 +148,27 @@ class SdkService {
     console.log('sdkService # passwordlessLogin')
     const loginParams = { username }
 
-    const { body: token } =  await cloudWalletApi.post('/users/sign-in-passwordless', loginParams)
+    const { data: token } =  await cloudWalletApi.post('/users/sign-in-passwordless', loginParams)
 
     console.log('token: ', token)
     return token
   }
 
   async completeLoginChallenge(token, confirmationCode) {
-    const networkMember = await this.sdk.completeLoginChallenge(token, confirmationCode, SDK_OPTIONS)
-    SdkService._saveAccessTokenToLocalStorage(networkMember)
-    return networkMember
+    console.log('sdkService # completeLoginChallenge')
+
+
+    const loginConfirmParams = { token, confirmationCode }
+
+    const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
+    console.log(response)
+
+    const { accessToken, did } = response.data
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
+
+    // const networkMember = await this.sdk.completeLoginChallenge(token, confirmationCode, SDK_OPTIONS)
+    // SdkService._saveAccessTokenToLocalStorage(networkMember)
+    // return networkMember
   }
 
   async forgotPassword(username, messageParameters) {
