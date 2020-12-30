@@ -30,7 +30,6 @@ const phoneNumberClaimMetadata = {
 
 class ValidatableCredential {
   constructor(credential, status = undefined, errorMessage = '') {
-    console.log("Home @ ValidatableCredential")
     this.credential = credential
     this.status = status
     this.errorMessage = errorMessage
@@ -57,7 +56,6 @@ class Home extends Component {
   }
 
   renderCredentials(verifiableCredentials) {
-    console.log('Home # renderCredentials')
     const credentialsList = []
 
     for (const [key, verifiableCredential] of verifiableCredentials.entries()) {
@@ -128,7 +126,6 @@ class Home extends Component {
   }
 
   async validateCredential(event, verifiableCredential) {
-    console.log('Home # validateCredential')
     event.preventDefault()
 
     let isLoading = true
@@ -162,7 +159,6 @@ class Home extends Component {
 
       await this.setState({ isLoading: false, isDeleteModalShown: false, areCredentialDetailsShown: false })
     } catch (error) {
-      console.log(error)
       alert(error.message)
 
       await this.setState({ isLoading: false, isDeleteModalShown: false })
@@ -186,12 +182,10 @@ class Home extends Component {
   }
 
   closeVerifiablePresentationModal() {
-    console.log('Home # closeVerifiablePresentationModal')
     this.setState({ verifiablePresentationModalCredential: undefined })
   }
 
   openCredentialShareModal(event) {
-    console.log('Home # openCredentialShareModal')
     event.preventDefault()
 
     const { credentialShareRequestToken } = this.state
@@ -206,14 +200,12 @@ class Home extends Component {
   }
 
   closeCredentialShareModal() {
-    console.log('Home # closeCredentialShareModal')
     this.setState({ credentialShareRequestModalToken: undefined })
   }
 
   // Depending on whether the username is a phone number, email, or neither,
   // returns the appropriate combination of claim and credentialMetadata
   makeClaimAndCredentialMetadata(username) {
-    console.log('Home # makeClaimAndCredentialMetadata')
     const isPhoneNumber = username.startsWith('+')
     if (isPhoneNumber) {
       return {
@@ -255,25 +247,21 @@ class Home extends Component {
   }
 
   makeVerifiableCredentials(credentials) {
-    console.log('Home # makeVerifiableCredentials')
     return credentials.map(credential => new ValidatableCredential(credential))
   }
 
   async getCredentials(networkMember) {
-    console.log('Home # getCredentials')
     const credentials = await networkMember.getCredentials()
     const verifiableCredentials = this.makeVerifiableCredentials(credentials)
     return { credentials, verifiableCredentials }
   }
 
   async refreshCredentials(networkMember) {
-    console.log('Home # refreshCredentials')
     const { credentials, verifiableCredentials } = await this.getCredentials(networkMember)
     this.setState({ credentials, verifiableCredentials })
   }
 
   async createLoginMethodCredential(event) {
-    console.log('Home # createLoginMethodCredential')
     event.preventDefault()
 
     const username = this.props.location.state.username
@@ -297,7 +285,6 @@ class Home extends Component {
   }
 
   async componentDidMount() {
-    console.log('Home # componentDidMount')
     try {
       const { did, credentials } = await window.sdk.getDidAndCredentials();
       this.props.userHasAuthenticated(true)
@@ -309,21 +296,6 @@ class Home extends Component {
       this.props.history.push('/login')
     }
   }
-
-  // async componentWillMount() {
-  //   console.log('Home # componentWillMount')
-  //   try {
-  //     const did = localStorage.getItem('did')
-  //     this.props.userHasAuthenticated(true)
-
-  //     // console.log(did)
-
-  //     this.setState({ did })
-  //   } catch (error) {
-  //     this.props.userHasAuthenticated(false)
-  //     this.props.history.push('/login')
-  //   }
-  // }
 
   render() {
     const { did, verifiableCredentials, verifiablePresentationModalCredential, credentialShareRequestModalToken } = this.state

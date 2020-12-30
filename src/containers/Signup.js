@@ -5,11 +5,11 @@ import { Checkbox, Button, FormGroup, FormControl, ControlLabel } from 'react-bo
 import './Signup.css'
 
 export default function Signup(props) {
-  const [username, setUsername] = useState('afshan.aman')  // TODO: remove
-  const [password, setPassword] = useState('Afshan@81')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [isUserNameFieldVisible, setIsUserNameFieldVisible] = useState(false)
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(true) // TODO: set to false
-  const [confirmPassword, setConfirmPassword] = useState('Afshan@81') // TODO: remove
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

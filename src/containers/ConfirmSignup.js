@@ -29,7 +29,7 @@ export default function ConfirmSignup(props) {
     try {
       await window.sdk.confirmSignUp(token, confirmationCode, { didMethod })
       props.userHasAuthenticated(true)
-      props.history.push('/')
+      props.history.push('/', { username })
     } catch (error) {
       setProgress(false)
       setDisabled(false)

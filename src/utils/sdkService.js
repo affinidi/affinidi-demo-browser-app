@@ -6,10 +6,11 @@ import { randomBytes } from "@affinidi/common/dist/shared/randomBytes";
 import SdkError from "@affinidi/wallet-core-sdk/dist/shared/SdkError";
 import config from "../config";
 import cloudWalletApi from './apiService'
+import LOCAL_STORAGE_KEY from './consts'
+
+const { SDK_ACCESS_TOKEN } = LOCAL_STORAGE_KEY
 
 const { WalletStorageService } = __dangerous
-
-const SDK_AUTHENTICATION_LOCAL_STORAGE_KEY = 'affinidi:accessToken'
 const SDK_OPTIONS = {
   env: config.env,
   apiKey: config.apiKey
@@ -34,7 +35,7 @@ class SdkService {
   }
 
   async init() {
-    const accessToken = localStorage.getItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY)
+    const accessToken = localStorage.getItem(SDK_ACCESS_TOKEN)
     if (!accessToken) {
       throw new SdkError('COR-9')
     }
@@ -60,7 +61,7 @@ class SdkService {
 
   async signOut() {
     await cloudWalletApi.post('/users/logout')
-    localStorage.removeItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY)
+    localStorage.removeItem(SDK_ACCESS_TOKEN)
   }
 
   async signUp(username, password, messageParameters) {
@@ -111,9 +112,13 @@ class SdkService {
   }
 
   async fromLoginAndPassword(username, password) {
-    const networkMember = await this.sdk.fromLoginAndPassword(username, password, SDK_OPTIONS)
-    SdkService._saveAccessTokenToLocalStorage(networkMember)
-    return networkMember
+    const loginParams = { username, password }
+
+    const response =  await cloudWalletApi.post('/users/login', loginParams)
+
+    const { accessToken, did } = response.data
+
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
   async changeUsername(username) {
@@ -140,15 +145,24 @@ class SdkService {
     const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
 
     const { accessToken, did } = response.data
+
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
-  async forgotPassword(username, messageParameters) {
-    await this.sdk.forgotPassword(username, SDK_OPTIONS, messageParameters)
+  async forgotPassword(username, messageParameters) {  
+    const forgotPasswordParams = { username }
+
+    await cloudWalletApi.post('/users/forgot-password', forgotPasswordParams)
   }
 
   async forgotPasswordSubmit(username, confirmationCode, password) {
-    await this.sdk.forgotPasswordSubmit(username, confirmationCode, password, SDK_OPTIONS)
+    const forgotPasswordSubmitParams = {
+      username,
+      otp: confirmationCode,
+      newPassword: password,
+    }
+
+    await cloudWalletApi.post('/users/forgot-password/confirm', forgotPasswordSubmitParams)
   }
 
   async register(password) {
@@ -157,7 +171,7 @@ class SdkService {
 
   async signUpWithExistsEntity(keyParams, username, password, messageParameters) {
     const networkMember = await this.sdk.signUpWithExistsEntity(keyParams, username, password, SDK_OPTIONS, messageParameters)
-    SdkService._saveAccessTokenToLocalStorage(networkMember)
+    SdkService._saveLoginCredentialsToLocalStorage(networkMember.accessToken)
     return networkMember
   }
 
@@ -217,18 +231,10 @@ class SdkService {
     return JwtService.fromJWT(token)
   }
 
-  // TODO: when all the sdk methods are converted to API calls, remove one of these methods
-  static _saveAccessTokenToLocalStorage(networkMember) {
+  static _saveLoginCredentialsToLocalStorage(accessToken, did = '') {
     try {
-      localStorage.setItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY, networkMember.accessToken)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  static _saveLoginCredentialsToLocalStorage(accessToken, did) {
-    try {
-      localStorage.setItem(SDK_AUTHENTICATION_LOCAL_STORAGE_KEY, accessToken)
-      localStorage.setItem('did', did)
+      localStorage.setItem(SDK_ACCESS_TOKEN, accessToken)
+      if (did !== '') localStorage.setItem('did', did)
 
     } catch (err) {
       console.error(err)
