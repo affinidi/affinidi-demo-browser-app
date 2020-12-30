@@ -88,7 +88,6 @@ class SdkService {
   }
 
   async getDidAndCredentials() {
-    console.log('sdkService # getDidAndCredentials')
     const networkMember = await this.init()
 
     const did = localStorage.getItem('did')
@@ -128,30 +127,20 @@ class SdkService {
   }
 
   async passwordlessLogin(username, messageParameters) {
-    // const token = await this.sdk.passwordlessLogin(username, SDK_OPTIONS, messageParameters)
-
-    console.log('sdkService # passwordlessLogin')
     const loginParams = { username }
 
     const { data: token } =  await cloudWalletApi.post('/users/sign-in-passwordless', loginParams)
 
-    console.log('token: ', token)
     return token
   }
 
   async completeLoginChallenge(token, confirmationCode) {
-    console.log('sdkService # completeLoginChallenge')
     const loginConfirmParams = { token, confirmationCode }
 
     const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
-    console.log(response)
 
     const { accessToken, did } = response.data
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
-
-    // const networkMember = await this.sdk.completeLoginChallenge(token, confirmationCode, SDK_OPTIONS)
-    // SdkService._saveAccessTokenToLocalStorage(networkMember)
-    // return networkMember
   }
 
   async forgotPassword(username, messageParameters) {
