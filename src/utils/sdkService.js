@@ -72,7 +72,7 @@ class SdkService {
     const signUpConfirmParams = { token, confirmationCode }
     const response =  await cloudWalletApi.post('/users/signup/confirm', signUpConfirmParams)
     const { accessToken } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
+    SdkService._saveAccessTokenToLocalStorage(accessToken)
   }
 
   async resendSignUpConfirmationCode(username, messageParameters) {
@@ -108,7 +108,7 @@ class SdkService {
     const loginParams = { username, password }
     const response =  await cloudWalletApi.post('/users/login', loginParams)
     const { accessToken } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
+    SdkService._saveAccessTokenToLocalStorage(accessToken)
   }
 
   async changeUsername(username) {
@@ -132,7 +132,7 @@ class SdkService {
     const loginConfirmParams = { token, confirmationCode }
     const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
     const { accessToken } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
+    SdkService._saveAccessTokenToLocalStorage(accessToken)
   }
 
   async forgotPassword(username, messageParameters) {  
@@ -155,7 +155,7 @@ class SdkService {
 
   async signUpWithExistsEntity(keyParams, username, password, messageParameters) {
     const networkMember = await this.sdk.signUpWithExistsEntity(keyParams, username, password, SDK_OPTIONS, messageParameters)
-    SdkService._saveLoginCredentialsToLocalStorage(networkMember.accessToken)
+    SdkService._saveAccessTokenToLocalStorage(networkMember.accessToken)
     return networkMember
   }
 
@@ -215,7 +215,7 @@ class SdkService {
     return JwtService.fromJWT(token)
   }
 
-  static _saveLoginCredentialsToLocalStorage(accessToken) {
+  static _saveAccessTokenToLocalStorage(accessToken) {
     try {
       localStorage.setItem(SDK_ACCESS_TOKEN, accessToken)
     } catch (err) {
