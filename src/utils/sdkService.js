@@ -41,11 +41,8 @@ class SdkService {
     }
 
     const { env, apiKey } = SDK_OPTIONS
-
     const { keyStorageUrl } = SDKConfigurator.getSdkOptions(env, apiKey)
-
     const encryptedSeed = await WalletStorageService.pullEncryptedSeed(accessToken, keyStorageUrl, SDK_OPTIONS)
-
     const encryptionKey = await WalletStorageService.pullEncryptionKey(accessToken)
 
     return new this.sdk(encryptionKey, encryptedSeed, { ...SDK_OPTIONS, cognitoUserTokens: { accessToken }})
@@ -66,7 +63,6 @@ class SdkService {
 
   async signUp(username, password, messageParameters) {
     const signUpParams = { username, password }
-
     const { data: token } =  await cloudWalletApi.post('/users/signup', signUpParams)
 
     return token
@@ -74,11 +70,8 @@ class SdkService {
 
   async confirmSignUp(token, confirmationCode, options = {}) {
     const signUpConfirmParams = { token, confirmationCode }
-
     const response =  await cloudWalletApi.post('/users/signup/confirm', signUpConfirmParams)
-
     const { accessToken, did } = response.data
-
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
@@ -113,11 +106,8 @@ class SdkService {
 
   async fromLoginAndPassword(username, password) {
     const loginParams = { username, password }
-
     const response =  await cloudWalletApi.post('/users/login', loginParams)
-
     const { accessToken, did } = response.data
-
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
@@ -133,7 +123,6 @@ class SdkService {
 
   async passwordlessLogin(username, messageParameters) {
     const loginParams = { username }
-
     const { data: token } =  await cloudWalletApi.post('/users/sign-in-passwordless', loginParams)
 
     return token
@@ -141,17 +130,13 @@ class SdkService {
 
   async completeLoginChallenge(token, confirmationCode) {
     const loginConfirmParams = { token, confirmationCode }
-
     const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
-
     const { accessToken, did } = response.data
-
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
   async forgotPassword(username, messageParameters) {  
     const forgotPasswordParams = { username }
-
     await cloudWalletApi.post('/users/forgot-password', forgotPasswordParams)
   }
 
@@ -161,7 +146,6 @@ class SdkService {
       otp: confirmationCode,
       newPassword: password,
     }
-
     await cloudWalletApi.post('/users/forgot-password/confirm', forgotPasswordSubmitParams)
   }
 
