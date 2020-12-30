@@ -33,9 +33,9 @@ export default function Signup(props) {
       return
     }
 
-    try {      
+    try {
       const token = await window.sdk.signUp(username, password)
-        
+
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
 
       if (isUsername) {
