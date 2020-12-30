@@ -301,9 +301,6 @@ class Home extends Component {
     try {
       const { did, credentials } = await window.sdk.getDidAndCredentials();
       this.props.userHasAuthenticated(true)
-
-      console.log('credential')
-      console.log(credentials)
       const verifiableCredentials = this.makeVerifiableCredentials(credentials)
 
       this.setState({ did, credentials, verifiableCredentials })
@@ -313,30 +310,26 @@ class Home extends Component {
     }
   }
 
-  async componentWillMount() {
-    console.log('Home # componentWillMount')
-    try {
-      const did = localStorage.getItem('did')
-      this.props.userHasAuthenticated(true)
+  // async componentWillMount() {
+  //   console.log('Home # componentWillMount')
+  //   try {
+  //     const did = localStorage.getItem('did')
+  //     this.props.userHasAuthenticated(true)
 
-      // console.log(did)
+  //     // console.log(did)
 
-      this.setState({ did })
-    } catch (error) {
-      this.props.userHasAuthenticated(false)
-      this.props.history.push('/login')
-    }
-  }
+  //     this.setState({ did })
+  //   } catch (error) {
+  //     this.props.userHasAuthenticated(false)
+  //     this.props.history.push('/login')
+  //   }
+  // }
 
   render() {
     const { did, verifiableCredentials, verifiablePresentationModalCredential, credentialShareRequestModalToken } = this.state
 
     const haveCredentials = verifiableCredentials && verifiableCredentials.length > 0
     const { isAuthenticated } = this.props
-
-    console.log('After Login ...')
-    // console.log(did)
-    console.log(isAuthenticated)
 
     return (
       <Fragment>
