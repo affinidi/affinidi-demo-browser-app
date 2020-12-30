@@ -71,8 +71,8 @@ class SdkService {
   async confirmSignUp(token, confirmationCode, options = {}) {
     const signUpConfirmParams = { token, confirmationCode }
     const response =  await cloudWalletApi.post('/users/signup/confirm', signUpConfirmParams)
-    const { accessToken, did } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
+    const { accessToken } = response.data
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
   }
 
   async resendSignUpConfirmationCode(username, messageParameters) {
@@ -84,7 +84,7 @@ class SdkService {
   async getDidAndCredentials() {
     const networkMember = await this.init()
 
-    const did = localStorage.getItem('did')
+    const did = networkMember.did
 
     let credentials = []
     try {
@@ -107,8 +107,8 @@ class SdkService {
   async fromLoginAndPassword(username, password) {
     const loginParams = { username, password }
     const response =  await cloudWalletApi.post('/users/login', loginParams)
-    const { accessToken, did } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
+    const { accessToken } = response.data
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
   }
 
   async changeUsername(username) {
@@ -131,8 +131,8 @@ class SdkService {
   async completeLoginChallenge(token, confirmationCode) {
     const loginConfirmParams = { token, confirmationCode }
     const response = await cloudWalletApi.post('/users/sign-in-passwordless/confirm', loginConfirmParams)
-    const { accessToken, did } = response.data
-    SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
+    const { accessToken } = response.data
+    SdkService._saveLoginCredentialsToLocalStorage(accessToken)
   }
 
   async forgotPassword(username, messageParameters) {  
@@ -215,11 +215,9 @@ class SdkService {
     return JwtService.fromJWT(token)
   }
 
-  static _saveLoginCredentialsToLocalStorage(accessToken, did = '') {
+  static _saveLoginCredentialsToLocalStorage(accessToken) {
     try {
       localStorage.setItem(SDK_ACCESS_TOKEN, accessToken)
-      if (did !== '') localStorage.setItem('did', did)
-
     } catch (err) {
       console.error(err)
     }
