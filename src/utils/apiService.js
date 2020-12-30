@@ -3,10 +3,8 @@ import config from "../config";
 import LOCAL_STORAGE_KEY from './consts'
 
 const { SDK_ACCESS_TOKEN } = LOCAL_STORAGE_KEY
-
 const { accessApiKey, env } = config
-
-let baseURL = `https://cloud-wallet-api.${env}.affinity-project.org/api/v1`
+const baseURL = `https://cloud-wallet-api.${env}.affinity-project.org/api/v1`
 
 const cloudWalletApi = axios.create({
 	baseURL,
