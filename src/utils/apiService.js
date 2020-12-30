@@ -1,20 +1,20 @@
 import axios from 'axios';
 import config from "../config";
 
-const { apiKey, env } = config
+const { accessApiKey, env } = config
 
 let baseURL = `https://cloud-wallet-api.${env}.affinity-project.org/api/v1`
 
 // TODO: remove the IF
-if (process.env.NODE_ENV === 'development') baseURL = 'http://localhost:3000/api/v1'
+// if (process.env.NODE_ENV === 'development') baseURL = 'http://localhost:3000/api/v1'
 console.log('env: ', env)
 console.log('baseUrl: ', baseURL)
-console.log('apiKey: ', apiKey)
+console.log('apiKey: ', accessApiKey)
 
 const cloudWalletApi = axios.create({
 	baseURL,
 	headers: {
-		'Api-Key': apiKey,
+		'Api-Key': accessApiKey,
 		'Content-Type': 'application/json',
 	},
 });

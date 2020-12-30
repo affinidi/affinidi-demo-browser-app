@@ -13,7 +13,7 @@ console.log('REACT_APP_API_KEY: ', process.env.REACT_APP_API_KEY)
 const envConfig = {
     env: decodeEnv(process.env.REACT_APP_ENVIRONMENT || process.env.NODE_ENV),
     apiKey: process.env.REACT_APP_API_KEY,
-    // cwApiKey: process.env.REACT_APP_CW_API_KEY,
+    accessApiKey: process.env.REACT_APP_ACCESS_API_KEY,
     messagesBaseUrl: process.env.REACT_APP_MESSAGES_BASE_URL || 'https://affinidi-messages.dev.affinity-project.org',
 };
 

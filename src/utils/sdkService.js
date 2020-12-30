@@ -12,7 +12,7 @@ const { WalletStorageService } = __dangerous
 const SDK_AUTHENTICATION_LOCAL_STORAGE_KEY = 'affinidi:accessToken'
 const SDK_OPTIONS = {
   env: config.env,
-  apiKey: config.apiKey
+  apiKey: config.accessApiKey
 }
 
 const keyStoneTestEncryptionKey = process.env.REACT_APP_KEYSTONE_TEST_ENCRYPTION_KEY
@@ -80,6 +80,7 @@ class SdkService {
 
     const { data: token } =  await cloudWalletApi.post('/users/signup', signUpParams)
 
+    console.log('token', token)
     return token
   }
 
@@ -88,8 +89,12 @@ class SdkService {
 
     const response =  await cloudWalletApi.post('/users/signup/confirm', signUpConfirmParams)
 
+    console.log('confirmSignup response')
+    console.log(response.body)
+    console.log(response.data)
     const { accessToken, did } = response.data
 
+    console.log('accessToken: ', accessToken)
     SdkService._saveLoginCredentialsToLocalStorage(accessToken, did)
   }
 
