@@ -6,7 +6,7 @@ import { CreateVerifiablePresentationModal } from "./CreateVerifiablePresentatio
 import { DeleteCredentialModal } from "./DeleteCredentialModal";
 import queryString from 'query-string'
 import {ModalOpener} from "./TokenModal";
-import CredentialCard from "../vendors/CredentailCard";
+import CredentialCard from "../vendors/CredentialCard";
 
 const loadingGif = require('../static/images/loading.gif')
 
@@ -159,7 +159,6 @@ class Home extends Component {
 
       await this.setState({ isLoading: false, isDeleteModalShown: false, areCredentialDetailsShown: false })
     } catch (error) {
-      console.log(error)
       alert(error.message)
 
       await this.setState({ isLoading: false, isDeleteModalShown: false })

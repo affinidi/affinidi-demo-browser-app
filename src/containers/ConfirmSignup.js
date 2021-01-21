@@ -6,13 +6,10 @@ import ExpandArea from "../components/ExpandArea";
 import './ConfirmSignup.css'
 
 export default function ConfirmSignup(props) {
-  const { token } = props.location.state
-  const [user,]   = token.split('::')
-
+  const { token, username } = props.location.state
   const [confirmationCode, setConfirmationCode] = useState('')
-  const [didMethod, setDidMethod]               = useState('jolo')
-
-  const [username] = useState(user)
+  const [didMethod, setDidMethod]               = useState('elem')
+  
   const [progress, setProgress] = useState(false)
   const [disabled, setDisabled] = useState(false)
 
@@ -91,9 +88,9 @@ export default function ConfirmSignup(props) {
             placeholder='select'
             disabled={ disabled }
             onChange={ event => setDidMethod(event.target.value) }
-          >
-            <option value='jolo'>jolo</option>
+          >            
             <option value='elem'>elem</option>
+            <option value='jolo'>jolo</option>
           </FormControl>
         </FormGroup>
 

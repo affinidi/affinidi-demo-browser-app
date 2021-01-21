@@ -43,7 +43,7 @@ export default function Signup(props) {
 
         props.history.push('/', { username })
       } else {
-        props.history.push('/confirm-signup', { token })
+        props.history.push('/confirm-signup', { username, token })
       }
 
     } catch (error) {
