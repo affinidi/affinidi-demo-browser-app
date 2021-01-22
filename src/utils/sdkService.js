@@ -97,8 +97,10 @@ class SdkService {
   }
 
   async validateCredential(credential) {
+    const { env, apiKey } = SDK_OPTIONS
+    const { registryUrl, metricsUrl } = SDKConfigurator.getSdkOptions(env, apiKey)
     //TODO: pass correct registryURL to constructor
-    const affinidi = new Affinidi({ apiKey: SDK_OPTIONS.apiKey })
+    const affinidi = new Affinidi({ apiKey: config.accessApiKey, registryUrl, metricsUrl })
     const result = await affinidi.validateCredential(credential)
 
     return result
@@ -135,7 +137,7 @@ class SdkService {
     SdkService._saveAccessTokenToLocalStorage(accessToken)
   }
 
-  async forgotPassword(username, messageParameters) {  
+  async forgotPassword(username, messageParameters) {
     const forgotPasswordParams = { username }
     await cloudWalletApi.post('/users/forgot-password', forgotPasswordParams)
   }
