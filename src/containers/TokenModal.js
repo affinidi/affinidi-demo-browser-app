@@ -73,7 +73,7 @@ export const ModalOpener = ({ token }) => {
             const couldOpen = open(token)
             setOpenError(!couldOpen)
         }
-    }, [token, open])
+    }, [])
 
     useEffect(() => {
         if (openError) {
