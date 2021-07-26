@@ -52,16 +52,12 @@ export default function Signup(props) {
     }
 
     try {
-      const token = await window.sdk.signUp(username, password, {
-                                                                  "didMethod": "jolo",
-                                                                  "keyTypes": [
-                                                                    keyTyped.toLowerCase()
-                                                                  ]
+      const token = await window.sdk.signUp(username, password, {"didMethod": "jolo",
+                                                                  "keyTypes": [ keyTyped.toLowerCase()]
                                                                 }
       )
-      console.log(token)
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
-      
+      console.log(token, isUsername)
       if (isUsername) {
         props.userHasAuthenticated(true)
 

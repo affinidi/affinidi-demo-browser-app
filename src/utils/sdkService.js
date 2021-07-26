@@ -62,7 +62,8 @@ class SdkService {
   }
 
   async signUp(username, password, options, messageParameters) {
-    const signUpParams = { username, password, options }
+
+    const signUpParams = { username, password, options, messageParameters }
     const { data: token } =  await cloudWalletApi.post('/users/signup', signUpParams)
 
     return token
