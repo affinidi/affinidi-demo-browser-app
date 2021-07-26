@@ -61,8 +61,8 @@ class SdkService {
     localStorage.removeItem(SDK_ACCESS_TOKEN)
   }
 
-  async signUp(username, password, messageParameters) {
-    const signUpParams = { username, password }
+  async signUp(username, password, options, messageParameters) {
+    const signUpParams = { username, password, options }
     const { data: token } =  await cloudWalletApi.post('/users/signup', signUpParams)
 
     return token
