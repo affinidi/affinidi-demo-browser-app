@@ -22,7 +22,8 @@ export default function Signup(props) {
   }, [])
 
   function validateForm() {
-    return username.length > 0 && password.length > 0 && confirmPassword.length > 0 && isTnCChecked
+    return username.length > 0 && password.length > 7 && confirmPassword.length > 7 && 
+    username.length < 129 && password.length < 257 && isTnCChecked
   }
 
   function toggleCheckbox(checkBoxType) {
