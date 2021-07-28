@@ -33,8 +33,7 @@ export const CreateVerifiablePresentationModal = ({ credential, onClose }) => {
 
     const ShareCredentialByLink = async () => {
         setLinkLoading(true);
-        const link = await window.sdk.getSharableCredentialLink()
-        console.log("link",link)
+        const link = await window.sdk.getSharableCredentialLink(credential.id)
         setSharableLink(link)
         setLinkLoading(false);
 
