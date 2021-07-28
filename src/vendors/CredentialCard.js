@@ -29,7 +29,7 @@ export default function CredentialCard(props) {
     }, [])
 
     function color() {
-        Math.seedrandom(credentialType)
+        //Math.seedrandom(credentialType)
         const rand = (Math.random() * 10).toFixed(0)
 
         switch (rand) {
