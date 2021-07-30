@@ -13,7 +13,6 @@ export default function Signup(props) {
   const [isRSAChecked, setIsRSAChecked] = useState(false)
   const [isBBSChecked, setIsBBSChecked] = useState(false)
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [keyTyped, setKeyTyped] = useState('')
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,16 +30,10 @@ export default function Signup(props) {
       isTnCChecked ? setIsTnCChecked(false) : setIsTnCChecked(true)
     }
     else if(checkBoxType === 'RSA'){
-      isRSAChecked ? setKeyTyped('') : setKeyTyped('RSA')
       isRSAChecked ? setIsRSAChecked(false) : setIsRSAChecked(true)
-      setIsBBSChecked(false)
-
     }
     else if(checkBoxType === 'BBS'){
-      isBBSChecked ? setKeyTyped('') : setKeyTyped('BBS')
       isBBSChecked ? setIsBBSChecked(false) : setIsBBSChecked(true)
-      setIsRSAChecked(false) 
-
     }
   }
 
@@ -53,8 +46,14 @@ export default function Signup(props) {
     }
 
     try {
-      const token = await window.sdk.signUp(username, password, {"didMethod": "jolo",
-                                                                  "keyTypes": [ keyTyped.toLowerCase()]
+      const key = []
+      if(isRSAChecked)
+        key.push("rsa")
+        
+      if(isBBSChecked)
+        key.push("bbs")
+      const token = await window.sdk.signUp(username, password, {"didMethod": "elem",
+                                                                  "keyTypes": key
                                                                 }
       )
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
@@ -64,7 +63,7 @@ export default function Signup(props) {
 
         props.history.push('/', { username })
       } else {
-        props.history.push('/confirm-signup', { username, token })
+        props.history.push('/confirm-signup', { username, token, key })
       }
 
     } catch (error) {
