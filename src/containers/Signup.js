@@ -3,12 +3,15 @@ import {Link} from "react-router-dom";
 import { Checkbox, Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap'
 
 import './Signup.css'
+import { createGlobalState } from 'react-use';
 
 export default function Signup(props) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isUserNameFieldVisible, setIsUserNameFieldVisible] = useState(false)
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false)
+  const [isTnCChecked, setIsTnCChecked] = useState(false)
+  const [isRSAChecked, setIsRSAChecked] = useState(false)
+  const [isBBSChecked, setIsBBSChecked] = useState(false)
   const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
@@ -18,11 +21,20 @@ export default function Signup(props) {
   }, [])
 
   function validateForm() {
-    return username.length > 0 && password.length > 0 && confirmPassword.length > 0 && isCheckboxChecked
+    return username.length > 0 && password.length > 7 && confirmPassword.length > 7 && 
+    username.length < 129 && password.length < 257 && isTnCChecked
   }
 
-  function toggleCheckbox() {
-    isCheckboxChecked ? setIsCheckboxChecked(false) : setIsCheckboxChecked(true)
+  function toggleCheckbox(checkBoxType) {
+    if(checkBoxType === 'T&C'){
+      isTnCChecked ? setIsTnCChecked(false) : setIsTnCChecked(true)
+    }
+    else if(checkBoxType === 'RSA'){
+      isRSAChecked ? setIsRSAChecked(false) : setIsRSAChecked(true)
+    }
+    else if(checkBoxType === 'BBS'){
+      isBBSChecked ? setIsBBSChecked(false) : setIsBBSChecked(true)
+    }
   }
 
   async function handleSignup(event) {
@@ -34,21 +46,45 @@ export default function Signup(props) {
     }
 
     try {
-      const token = await window.sdk.signUp(username, password)
-
+      const keyTypes = []
+      if(isRSAChecked)
+        keyTypes.push("rsa")
+        
+      if(isBBSChecked)
+        keyTypes.push("bbs")
+      const opions = {
+        "didMethod": "elem"
+      }
+      if(keyTypes.length !== 0)
+        options.keyTypes = keyTypes;
+      const token = await window.sdk.signUp(username, password, options)
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
-
       if (isUsername) {
         props.userHasAuthenticated(true)
 
         props.history.push('/', { username })
       } else {
-        props.history.push('/confirm-signup', { username, token })
+        props.history.push('/confirm-signup', { username, token, options })
       }
 
     } catch (error) {
       alert(error.message)
     }
+  }
+
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
   }
 
   return (
@@ -90,11 +126,34 @@ export default function Signup(props) {
             type='password'
           />
         </FormGroup>
+        {/* keytyped  */}
+        <button type="button" class="collapsible">External Keys Options</button>
+        <div class="content">
+          <FormGroup controlId='keyTyped' bsSize='large'>
+            <Checkbox
+              className='key-type'
+              checked={isRSAChecked}
+              onChange={() => toggleCheckbox('RSA')}
+            >
+              RSA
+            </Checkbox>
+          </FormGroup>
+          <FormGroup controlId='keyTyped' bsSize='large'>
+            <Checkbox
+              className='key-type'
+              checked={isBBSChecked}
+              onChange={() => toggleCheckbox('BBS')}
+            >
+              BBS
+            </Checkbox>
+          </FormGroup>  
+        </div>
+        
         <FormGroup controlId='checkbox' bsSize='large'>
           <Checkbox
             className='Signup-Checkbox'
-            checked={isCheckboxChecked}
-            onChange={() => toggleCheckbox()}
+            checked={isTnCChecked}
+            onChange={() => toggleCheckbox('T&C')}
           >
             I accept the terms and conditions
           </Checkbox>
