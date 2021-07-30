@@ -6,7 +6,7 @@ import ExpandArea from "../components/ExpandArea";
 import './ConfirmSignup.css'
 
 export default function ConfirmSignup(props) {
-  const { token, username ,key } = props.location.state
+  const { token, username ,options } = props.location.state
   const [confirmationCode, setConfirmationCode] = useState('')
   const [didMethod, setDidMethod]               = useState('elem')
   
@@ -27,8 +27,7 @@ export default function ConfirmSignup(props) {
     setDisabled(true)
 
     try {
-      await window.sdk.confirmSignUp(token, confirmationCode, { didMethod, key })
-      props.userHasAuthenticated(true)
+      await window.sdk.confirmSignUp(token, confirmationCode, options)
       props.history.push('/', { username })
     } catch (error) {
       setProgress(false)

@@ -52,10 +52,12 @@ export default function Signup(props) {
         
       if(isBBSChecked)
         key.push("bbs")
-      const token = await window.sdk.signUp(username, password, {"didMethod": "elem",
-                                                                  "keyTypes": key
-                                                                }
-      )
+      const options = {
+        "didMethod": "elem"
+      }
+      if(key.length !== 0)
+        options.keyTypes = key;
+      const token = await window.sdk.signUp(username, password, options)
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
       console.log(token, isUsername)
       if (isUsername) {
