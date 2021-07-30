@@ -40,32 +40,31 @@ export default function Signup(props) {
   async function handleSignup(event) {
     event.preventDefault()
 
-    if (password !== confirmPassword ) {
+    if (password !== confirmPassword) {
       alert('Passwords don\'t match!')
       return
     }
 
     try {
-      const key = []
+      const keyTypes = []
       if(isRSAChecked)
-        key.push("rsa")
+        keyTypes.push("rsa")
         
       if(isBBSChecked)
-        key.push("bbs")
-      const options = {
+        keyTypes.push("bbs")
+      const opions = {
         "didMethod": "elem"
       }
-      if(key.length !== 0)
-        options.keyTypes = key;
+      if(keyTypes.length !== 0)
+        options.keyTypes = keyTypes;
       const token = await window.sdk.signUp(username, password, options)
       const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
-      console.log(token, isUsername)
       if (isUsername) {
         props.userHasAuthenticated(true)
 
         props.history.push('/', { username })
       } else {
-        props.history.push('/confirm-signup', { username, token, key })
+        props.history.push('/confirm-signup', { username, token, options })
       }
 
     } catch (error) {
@@ -78,7 +77,6 @@ export default function Signup(props) {
 
   for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
-      console.log('button clicked')
       this.classList.toggle("active");
       var content = this.nextElementSibling;
       if (content.style.display === "block") {
