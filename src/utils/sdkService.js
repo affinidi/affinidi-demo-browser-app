@@ -95,6 +95,10 @@ class SdkService {
 
     return { did, credentials }
   }
+  async getSharableCredentialLink(credentialId) {
+    const response = await cloudWalletApi.post(`/wallet/credentials/${credentialId}/share`)
+    return response.data.sharingUrl
+  }
 
   async validateCredential(credential) {
     const { env, apiKey } = SDK_OPTIONS
